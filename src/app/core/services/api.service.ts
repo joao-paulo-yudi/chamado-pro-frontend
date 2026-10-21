@@ -1,26 +1,36 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+/**
+ * Prefixo das chamadas à API. As rotas das telas (/chamados, /usuarios...) usam os mesmos
+ * nomes dos endpoints; o prefixo evita o conflito. O proxy (dev) e o NGINX (produção)
+ * removem o `/api` antes de encaminhar ao backend.
+ */
+export const API_PREFIX = '/api';
+
+/** Wrapper fino do HttpClient. As URLs são relativas ao backend: `get('/chamados')` -> `/api/chamados`. */
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly API_URL = '';
-
-  constructor(private http: HttpClient) { }
+  private readonly http = inject(HttpClient);
 
   get<T>(url: string): Observable<T> {
-    return this.http.get<T>(`${this.API_URL}${url}`);
+    return this.http.get<T>(API_PREFIX + url);
   }
 
-  post<T>(url: string, data: any): Observable<T> {
-    return this.http.post<T>(`${this.API_URL}${url}`, data);
+  getBlob(url: string): Observable<Blob> {
+    return this.http.get(API_PREFIX + url, { responseType: 'blob' });
   }
 
-  put<T>(url: string, data: any): Observable<T> {
-    return this.http.put<T>(`${this.API_URL}${url}`, data);
+  post<T>(url: string, data: unknown): Observable<T> {
+    return this.http.post<T>(API_PREFIX + url, data);
+  }
+
+  put<T>(url: string, data: unknown): Observable<T> {
+    return this.http.put<T>(API_PREFIX + url, data);
   }
 
   delete<T>(url: string): Observable<T> {
-    return this.http.delete<T>(`${this.API_URL}${url}`);
+    return this.http.delete<T>(API_PREFIX + url);
   }
 }

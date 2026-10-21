@@ -1,0 +1,326 @@
+<div class="page">
+  <a routerLink="/chamados" class="back-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar para chamados</a>
+
+  @if (carregando() && !chamado()) {
+    <app-loading-state mensagem="Carregando chamado..." />
+  } @else if (erro() && !chamado()) {
+    <div class="card">
+      @switch (erro()) {
+        @case ('nao-encontrado') {
+          <app-empty-state icon="fa-ticket" titulo="Chamado não encontrado" descricao="Ele pode ter sido excluído ou o número está incorreto.">
+            <a routerLink="/chamados" class="btn btn--secondary">Ver chamados</a>
+          </app-empty-state>
+        }
+        @case ('sem-acesso') {
+          <app-empty-state icon="fa-lock" titulo="Acesso negado" descricao="Você não tem permissão para ver este chamado.">
+            <a routerLink="/chamados" class="btn btn--secondary">Ver chamados</a>
+          </app-empty-state>
+        }
+        @default {
+          <app-empty-state icon="fa-plug-circle-exclamation" titulo="Não foi possível carregar o chamado" descricao="Verifique sua conexão e tente novamente.">
+            <button type="button" class="btn btn--secondary" (click)="carregarChamado()">Tentar novamente</button>
+          </app-empty-state>
+        }
+      }
+    </div>
+  } @else {
+  @if (chamado(); as c) {
+    <!-- Cabeçalho -->
+    <header class="ticket-head">
+      <div class="ticket-head__main">
+        <p class="ticket-head__id">Chamado #{{ c.id }}</p>
+        <h1 class="ticket-head__title">{{ c.titulo }}</h1>
+        <div class="ticket-head__badges">
+          <app-enum-badge kind="status" [value]="c.status" prefixo="Status" />
+          <app-enum-badge kind="prioridade" [value]="c.prioridade" [icone]="true" prefixo="Prioridade" />
+          <app-enum-badge kind="sla" [value]="c.statusSla" [icone]="true" prefixo="SLA" />
+          @if (c.nivelAtual) {
+            <span class="badge badge--brand"><span class="sr-only">Nível: </span>Nível {{ c.nivelAtual }}</span>
+          }
+        </div>
+        <p class="ticket-head__meta">
+          Aberto por <strong>{{ c.clienteNome || '—' }}</strong> ·
+          <span [title]="c.dataCriacao | date: 'dd/MM/yyyy HH:mm'">{{ c.dataCriacao | relativeTime }}</span>
+          @if (c.ultimaAtualizacao) {
+            · atualizado {{ c.ultimaAtualizacao | relativeTime }}
+          }
+        </p>
+      </div>
+      <div class="ticket-head__actions">
+        @if (podeEditar() && !editando()) {
+          <button type="button" class="btn btn--secondary" (click)="iniciarEdicao()">
+            <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i> Editar
+          </button>
+        }
+        @if (auth.isAdmin()) {
+          <button type="button" class="btn btn--danger-outline" (click)="excluir()">
+            <i class="fa-regular fa-trash-can" aria-hidden="true"></i> Excluir
+          </button>
+        }
+      </div>
+    </header>
+
+    <!-- Progresso -->
+    <ol class="progress card" aria-label="Andamento do chamado">
+      @for (etapa of etapas; track etapa; let i = $index) {
+        <li
+          class="progress__step"
+          [class.progress__step--done]="i < etapaAtual()"
+          [class.progress__step--current]="i === etapaAtual()"
+          [attr.aria-current]="i === etapaAtual() ? 'step' : null"
+        >
+          <span class="progress__dot" aria-hidden="true">
+            @if (i < etapaAtual()) {
+              <i class="fa-solid fa-check"></i>
+            } @else {
+              {{ i + 1 }}
+            }
+          </span>
+          <span class="progress__label">{{ etapa | label: 'status' }}</span>
+        </li>
+      }
+    </ol>
+
+    <div class="ticket-layout">
+      <!-- Coluna principal -->
+      <div class="ticket-main">
+        <section class="card" aria-labelledby="descricao-titulo">
+          <div class="card__header">
+            <h2 id="descricao-titulo" class="card__title">Descrição</h2>
+            @if (c.categoria) {
+              <app-enum-badge kind="categoria" [value]="c.categoria" [icone]="true" prefixo="Categoria" />
+            }
+          </div>
+          <div class="card__body">
+            @if (editando()) {
+              <form class="stack" (ngSubmit)="salvarEdicao()">
+                <div class="form-field">
+                  <label for="edit-titulo" class="form-label">Título</label>
+                  <input id="edit-titulo" name="titulo" class="form-control" maxlength="200" required [(ngModel)]="editTitulo" />
+                </div>
+                <div class="form-field">
+                  <label for="edit-descricao" class="form-label">Descrição</label>
+                  <textarea id="edit-descricao" name="descricao" class="form-control" rows="6" maxlength="5000" required [(ngModel)]="editDescricao"></textarea>
+                </div>
+                <div class="form-actions">
+                  <button type="button" class="btn btn--secondary" (click)="editando.set(false)">Cancelar</button>
+                  <button type="submit" class="btn btn--primary" [disabled]="!editTitulo.trim() || !editDescricao.trim()">Salvar alterações</button>
+                </div>
+              </form>
+            } @else {
+              <p class="description">{{ c.descricao || 'Sem descrição.' }}</p>
+            }
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="tabs detail-tabs" role="tablist" aria-label="Atividade do chamado" (keydown)="teclaAba($event)">
+            <button
+              id="aba-conversa"
+              type="button"
+              role="tab"
+              class="tab"
+              aria-controls="painel-conversa"
+              [attr.aria-selected]="aba() === 'conversa'"
+              [attr.tabindex]="aba() === 'conversa' ? 0 : -1"
+              (click)="aba.set('conversa')"
+            >
+              <i class="fa-regular fa-comments" aria-hidden="true"></i> Conversa
+            </button>
+            <button
+              id="aba-historico"
+              type="button"
+              role="tab"
+              class="tab"
+              aria-controls="painel-historico"
+              [attr.aria-selected]="aba() === 'historico'"
+              [attr.tabindex]="aba() === 'historico' ? 0 : -1"
+              (click)="aba.set('historico')"
+            >
+              <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Histórico
+              <span class="tab__count">{{ historico().length }}</span>
+            </button>
+          </div>
+          <div class="card__body">
+            <div id="painel-conversa" role="tabpanel" aria-labelledby="aba-conversa" [hidden]="aba() !== 'conversa'">
+              <app-comentarios [chamadoId]="c.id" (alterado)="carregarHistorico()" />
+            </div>
+            <div id="painel-historico" role="tabpanel" aria-labelledby="aba-historico" [hidden]="aba() !== 'historico'">
+              <app-historico-chamado [eventos]="historico()" />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Painel lateral -->
+      <aside class="ticket-side" aria-label="Informações e ações do chamado">
+        <section class="card" aria-labelledby="detalhes-titulo">
+          <div class="card__header">
+            <h2 id="detalhes-titulo" class="card__title">Detalhes</h2>
+            @if (salvando()) {
+              <span class="spinner spinner--sm" role="status" aria-label="Salvando"></span>
+            }
+          </div>
+          <div class="card__body stack">
+            @if (auth.isEquipe()) {
+              <div class="form-field">
+                <label for="campo-status" class="form-label">Status</label>
+                <select id="campo-status" class="form-control" [ngModel]="c.status" (ngModelChange)="alterarStatus($event)" [disabled]="salvando()">
+                  @for (s of statusOpcoes; track s) {
+                    <option [value]="s">{{ s | label: 'status' }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="campo-prioridade" class="form-label">Prioridade</label>
+                <select id="campo-prioridade" class="form-control" [ngModel]="c.prioridade" (ngModelChange)="alterarPrioridade($event)" [disabled]="salvando()">
+                  @for (p of prioridadeOpcoes; track p) {
+                    <option [value]="p">{{ p | label: 'prioridade' }}</option>
+                  }
+                </select>
+              </div>
+            }
+
+            <dl class="meta-list">
+              <dt>Responsável</dt>
+              <dd>{{ c.tecnicoNome || 'Não atribuído' }}</dd>
+              <dt>Cliente</dt>
+              <dd>{{ c.clienteNome || '—' }}</dd>
+              <dt>Categoria</dt>
+              <dd>{{ c.categoria | label: 'categoria' : 'Sem categoria' }}</dd>
+              <dt>Nível</dt>
+              <dd>{{ c.nivelAtual || 'N1' }}</dd>
+              <dt>Aberto em</dt>
+              <dd>{{ c.dataCriacao | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </dl>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="sla-titulo">
+          <div class="card__header">
+            <h2 id="sla-titulo" class="card__title">Prazos (SLA)</h2>
+            <app-enum-badge kind="sla" [value]="c.statusSla" [icone]="true" />
+          </div>
+          <div class="card__body">
+            <dl class="meta-list">
+              <dt>1ª resposta</dt>
+              <dd>
+                @if (c.dataPrimeiraResposta) {
+                  <i class="fa-solid fa-check sla-ok" aria-hidden="true"></i> {{ c.dataPrimeiraResposta | date: 'dd/MM HH:mm' }}
+                } @else if (c.prazoPrimeiraResposta) {
+                  até {{ c.prazoPrimeiraResposta | date: 'dd/MM HH:mm' }}
+                  <span class="muted">({{ c.prazoPrimeiraResposta | relativeTime }})</span>
+                } @else {
+                  —
+                }
+              </dd>
+              <dt>Resolução</dt>
+              <dd>
+                @if (c.prazoResolucao) {
+                  até {{ c.prazoResolucao | date: 'dd/MM HH:mm' }}
+                  @if (!encerrado()) {
+                    <span class="muted">({{ c.prazoResolucao | relativeTime }})</span>
+                  }
+                } @else {
+                  —
+                }
+              </dd>
+            </dl>
+          </div>
+        </section>
+
+        @if (auth.isEquipe()) {
+          <section class="card" aria-labelledby="atribuicao-titulo">
+            <div class="card__header">
+              <h2 id="atribuicao-titulo" class="card__title">Atribuição</h2>
+            </div>
+            <div class="card__body stack">
+              @if (auth.isTecnico()) {
+                @if (atribuidoAMim()) {
+                  <p class="alert alert--success"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Você é o responsável por este chamado.</p>
+                } @else {
+                  <button type="button" class="btn btn--primary btn--block" (click)="assumir()" [disabled]="salvando()">
+                    <i class="fa-solid fa-hand" aria-hidden="true"></i> Assumir chamado
+                  </button>
+                }
+              }
+              @if (auth.isAdmin()) {
+                <div class="form-field">
+                  <label for="campo-tecnico" class="form-label">Atribuir a um técnico</label>
+                  <select id="campo-tecnico" class="form-control" [(ngModel)]="tecnicoSelecionado">
+                    <option [ngValue]="null" disabled>Selecione...</option>
+                    @for (t of tecnicos(); track t.id) {
+                      <option [ngValue]="t.id">{{ t.nome }} ({{ t.nivelTecnico || 'N1' }})</option>
+                    }
+                  </select>
+                </div>
+                <button type="button" class="btn btn--primary btn--block" (click)="atribuir()" [disabled]="!tecnicoSelecionado || salvando()">
+                  Atribuir
+                </button>
+              }
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="escalonamento-titulo">
+            <div class="card__header">
+              <h2 id="escalonamento-titulo" class="card__title">Escalonamento</h2>
+              <span class="badge badge--brand">Nível {{ c.nivelAtual || 'N1' }}</span>
+            </div>
+            <div class="card__body stack">
+              @if (podeEscalonar()) {
+                <div class="form-field">
+                  <label for="esc-tecnico" class="form-label">Atribuir a <span class="opt">(opcional)</span></label>
+                  <select id="esc-tecnico" class="form-control" [(ngModel)]="escalonamentoTecnicoId">
+                    <option [ngValue]="null">Atribuição automática</option>
+                    @for (t of tecnicos(); track t.id) {
+                      <option [ngValue]="t.id">{{ t.nome }} ({{ t.nivelTecnico || 'N1' }})</option>
+                    }
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="esc-motivo" class="form-label">Motivo <span class="opt">(opcional)</span></label>
+                  <textarea id="esc-motivo" class="form-control" rows="2" maxlength="1000" placeholder="Por que escalonar?" [(ngModel)]="escalonamentoMotivo"></textarea>
+                </div>
+                <button type="button" class="btn btn--secondary btn--block" (click)="escalonar()" [disabled]="salvando()">
+                  <i class="fa-solid fa-turn-up" aria-hidden="true"></i> Escalonar para {{ proximoNivel() }}
+                </button>
+              } @else {
+                <p class="muted text-sm">Este chamado já está no nível máximo (N3).</p>
+              }
+            </div>
+          </section>
+        }
+
+        <section class="card" aria-labelledby="avaliacao-titulo">
+          <div class="card__header">
+            <h2 id="avaliacao-titulo" class="card__title">Avaliação do atendimento</h2>
+          </div>
+          <div class="card__body stack">
+            @if (ehDono() && encerrado()) {
+              <p class="text-sm muted">Como foi o atendimento? Sua opinião ajuda a melhorar o suporte.</p>
+              <app-star-rating [(valor)]="avaliacao" nome="avaliacao-chamado" rotulo="Nota do atendimento" />
+              <div class="form-field">
+                <label for="campo-feedback" class="form-label">Comentário <span class="opt">(opcional)</span></label>
+                <textarea id="campo-feedback" class="form-control" rows="3" maxlength="2000" placeholder="Conte como foi sua experiência..." [(ngModel)]="feedback"></textarea>
+              </div>
+              <button type="button" class="btn btn--primary btn--block" (click)="enviarAvaliacao()" [disabled]="!avaliacao || salvando()">
+                {{ c.avaliacao ? 'Atualizar avaliação' : 'Enviar avaliação' }}
+              </button>
+            } @else if (c.avaliacao) {
+              <app-star-rating [valor]="c.avaliacao" [readonly]="true" />
+              <p class="feedback">{{ c.feedback || 'Sem comentário.' }}</p>
+            } @else if (ehDono()) {
+              <p class="muted text-sm">
+                <i class="fa-regular fa-star" aria-hidden="true"></i>
+                Você poderá avaliar o atendimento quando o chamado for resolvido.
+              </p>
+            } @else {
+              <p class="muted text-sm">O cliente ainda não avaliou este atendimento.</p>
+            }
+          </div>
+        </section>
+      </aside>
+    </div>
+  }
+  }
+</div>

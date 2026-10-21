@@ -1,0 +1,36 @@
+<aside class="sidebar" [class.sidebar--aberto]="aberto()" aria-label="Menu lateral">
+  <div class="sidebar__head">
+    <a routerLink="/" class="sidebar__logo" (click)="fechar.emit()">
+      <img src="assets/logo-vertical-branco.svg" alt="ChamadoPro - página inicial" />
+    </a>
+    <button type="button" class="sidebar__close" (click)="fechar.emit()" aria-label="Fechar menu">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar__nav" aria-label="Menu principal">
+    @for (grupo of grupos(); track grupo.titulo) {
+      <div class="nav-group">
+        <p class="nav-group__title">{{ grupo.titulo }}</p>
+        <ul>
+          @for (item of grupo.itens; track item.label) {
+            <li>
+              <a
+                [routerLink]="item.link"
+                [class.active]="item.isAtivo"
+                [attr.aria-current]="item.isAtivo ? 'page' : null"
+                class="nav-link"
+                (click)="fechar.emit()"
+              >
+                <span class="nav-link__icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>
+                <span>{{ item.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <p class="sidebar__foot">ChamadoPro · Central de suporte</p>
+</aside>

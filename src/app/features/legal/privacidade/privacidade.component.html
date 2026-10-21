@@ -1,102 +1,100 @@
-<app-legal-shell titulo="Política de Privacidade">
-  <p>
-    Esta Política explica como o <strong>{{ info.nomeFantasia }}</strong>, operado por
-    {{ info.razaoSocial }} (CNPJ {{ info.cnpj }}, {{ info.endereco }}), trata dados pessoais
-    no sistema de chamados, de acordo com a Lei Geral de Proteção de Dados (Lei 13.709/2018 — LGPD)
-    e o Marco Civil da Internet (Lei 12.965/2014). Versão {{ versao }}.
-  </p>
+<p>
+  Esta Política explica como o <strong>{{ info.nomeFantasia }}</strong>, operado por
+  {{ info.razaoSocial }} (CNPJ {{ info.cnpj }}, {{ info.endereco }}), trata dados pessoais
+  no sistema de chamados, de acordo com a Lei Geral de Proteção de Dados (Lei 13.709/2018 — LGPD)
+  e o Marco Civil da Internet (Lei 12.965/2014). Versão {{ versao }}.
+</p>
 
-  <h2>1. Quem é o controlador e como falar conosco</h2>
-  <p>
-    Controlador: {{ info.razaoSocial }}. Encarregado pelo tratamento de dados (DPO):
-    {{ info.encarregadoNome }} — {{ info.encarregadoEmail }}.
-  </p>
-  <p>
-    Quando o sistema é usado por uma empresa contratante para atender os próprios clientes ou
-    colaboradores, essa empresa pode ser a controladora dos dados dos chamados e nós atuamos como
-    operadores, seguindo as instruções dela.
-  </p>
+<h2>1. Quem é o controlador e como falar conosco</h2>
+<p>
+  Controlador: {{ info.razaoSocial }}. Encarregado pelo tratamento de dados (DPO):
+  {{ info.encarregadoNome }} — {{ info.encarregadoEmail }}.
+</p>
+<p>
+  Quando o sistema é usado por uma empresa contratante para atender os próprios clientes ou
+  colaboradores, essa empresa pode ser a controladora dos dados dos chamados e nós atuamos como
+  operadores, seguindo as instruções dela.
+</p>
 
-  <h2>2. Quais dados tratamos</h2>
-  <table class="legal-table">
-    <caption>Dados pessoais tratados pelo sistema</caption>
-    <thead>
-      <tr><th scope="col">Dado</th><th scope="col">Origem</th><th scope="col">Finalidade</th><th scope="col">Base legal (LGPD)</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Nome, e-mail, perfil (cliente/técnico/administrador) e nível técnico</td><td>Cadastro feito pelo administrador</td><td>Criar e identificar a conta, controlar permissões</td><td>Execução de contrato (art. 7º, V)</td></tr>
-      <tr><td>Senha</td><td>Usuário</td><td>Autenticação. Guardada apenas como hash (BCrypt); nunca é exibida</td><td>Execução de contrato (art. 7º, V)</td></tr>
-      <tr><td>Conteúdo dos chamados, comentários, avaliação e feedback</td><td>Usuário</td><td>Prestar o atendimento solicitado</td><td>Execução de contrato (art. 7º, V)</td></tr>
-      <tr><td>Histórico de ações nos chamados (quem fez o quê e quando)</td><td>Gerado pelo sistema</td><td>Auditoria, segurança e prova do atendimento</td><td>Legítimo interesse (art. 7º, IX) e exercício regular de direitos (art. 7º, VI)</td></tr>
-      <tr><td>Notificações dentro do sistema</td><td>Gerado pelo sistema</td><td>Avisar sobre atualizações dos chamados</td><td>Execução de contrato (art. 7º, V)</td></tr>
-      <tr><td>Telefone e chave de API do CallMeBot (opcionais)</td><td>Usuário/administrador</td><td>Enviar avisos por WhatsApp</td><td>Consentimento (art. 7º, I), revogável a qualquer momento</td></tr>
-      <tr><td>Registros de aceite dos termos e de consentimentos (versão, data e hora)</td><td>Gerado pelo sistema</td><td>Comprovar o consentimento</td><td>Cumprimento de obrigação legal (art. 7º, II e art. 8º, §2º)</td></tr>
-      <tr><td>Registros de acesso (endereço IP, data e hora)</td><td>Servidores e balanceador de carga</td><td>Segurança e guarda exigida por lei</td><td>Obrigação legal (Marco Civil, art. 15)</td></tr>
-    </tbody>
-  </table>
-  <p>
-    Não coletamos dados sensíveis de propósito. <strong>Não inclua</strong> nos chamados senhas,
-    dados de saúde, documentos ou informações de terceiros que não sejam necessárias para o atendimento.
-    Não usamos os dados para publicidade, não vendemos dados e não fazemos decisões automatizadas
-    com efeitos jurídicos sobre você. A prioridade sugerida pela categoria do chamado é apenas uma
-    sugestão que a equipe pode alterar.
-  </p>
+<h2>2. Quais dados tratamos</h2>
+<table class="legal-table">
+  <caption>Dados pessoais tratados pelo sistema</caption>
+  <thead>
+    <tr><th scope="col">Dado</th><th scope="col">Origem</th><th scope="col">Finalidade</th><th scope="col">Base legal (LGPD)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Nome, e-mail, perfil (cliente/técnico/administrador) e nível técnico</td><td>Cadastro feito pelo administrador</td><td>Criar e identificar a conta, controlar permissões</td><td>Execução de contrato (art. 7º, V)</td></tr>
+    <tr><td>Senha</td><td>Usuário</td><td>Autenticação. Guardada apenas como hash (BCrypt); nunca é exibida</td><td>Execução de contrato (art. 7º, V)</td></tr>
+    <tr><td>Conteúdo dos chamados, comentários, avaliação e feedback</td><td>Usuário</td><td>Prestar o atendimento solicitado</td><td>Execução de contrato (art. 7º, V)</td></tr>
+    <tr><td>Histórico de ações nos chamados (quem fez o quê e quando)</td><td>Gerado pelo sistema</td><td>Auditoria, segurança e prova do atendimento</td><td>Legítimo interesse (art. 7º, IX) e exercício regular de direitos (art. 7º, VI)</td></tr>
+    <tr><td>Notificações dentro do sistema</td><td>Gerado pelo sistema</td><td>Avisar sobre atualizações dos chamados</td><td>Execução de contrato (art. 7º, V)</td></tr>
+    <tr><td>Telefone e chave de API do CallMeBot (opcionais)</td><td>Usuário/administrador</td><td>Enviar avisos por WhatsApp</td><td>Consentimento (art. 7º, I), revogável a qualquer momento</td></tr>
+    <tr><td>Registros de aceite dos termos e de consentimentos (versão, data e hora)</td><td>Gerado pelo sistema</td><td>Comprovar o consentimento</td><td>Cumprimento de obrigação legal (art. 7º, II e art. 8º, §2º)</td></tr>
+    <tr><td>Registros de acesso (endereço IP, data e hora)</td><td>Servidores e balanceador de carga</td><td>Segurança e guarda exigida por lei</td><td>Obrigação legal (Marco Civil, art. 15)</td></tr>
+  </tbody>
+</table>
+<p>
+  Não coletamos dados sensíveis de propósito. <strong>Não inclua</strong> nos chamados senhas,
+  dados de saúde, documentos ou informações de terceiros que não sejam necessárias para o atendimento.
+  Não usamos os dados para publicidade, não vendemos dados e não fazemos decisões automatizadas
+  com efeitos jurídicos sobre você. A prioridade sugerida pela categoria do chamado é apenas uma
+  sugestão que a equipe pode alterar.
+</p>
 
-  <h2>3. Com quem compartilhamos</h2>
-  <ul>
-    <li><strong>Amazon Web Services (AWS)</strong> — hospedagem da aplicação e do banco de dados (operador).</li>
-    <li>
-      <strong>CallMeBot</strong> (serviço de terceiro que envia mensagens de WhatsApp) — <em>somente</em>
-      se você ativar essa opção. Recebe seu telefone, sua chave de API e uma mensagem genérica
-      ("há uma atualização no chamado #N"), sem título, descrição ou comentários. O serviço é operado
-      fora do Brasil, o que caracteriza transferência internacional (art. 33, VIII — consentimento específico).
-    </li>
-    <li>Autoridades públicas, quando houver ordem judicial ou obrigação legal.</li>
-  </ul>
-  <p>
-    O sistema não usa ferramentas de analytics, redes sociais, pixels de rastreamento ou anúncios.
-    Fontes e ícones são servidos pelo nosso próprio servidor, sem chamadas a CDNs de terceiros.
-  </p>
+<h2>3. Com quem compartilhamos</h2>
+<ul>
+  <li><strong>Amazon Web Services (AWS)</strong> — hospedagem da aplicação e do banco de dados (operador).</li>
+  <li>
+    <strong>CallMeBot</strong> (serviço de terceiro que envia mensagens de WhatsApp) — <em>somente</em>
+    se você ativar essa opção. Recebe seu telefone, sua chave de API e uma mensagem genérica
+    ("há uma atualização no chamado #N"), sem título, descrição ou comentários. O serviço é operado
+    fora do Brasil, o que caracteriza transferência internacional (art. 33, VIII — consentimento específico).
+  </li>
+  <li>Autoridades públicas, quando houver ordem judicial ou obrigação legal.</li>
+</ul>
+<p>
+  O sistema não usa ferramentas de analytics, redes sociais, pixels de rastreamento ou anúncios.
+  Fontes e ícones são servidos pelo nosso próprio servidor, sem chamadas a CDNs de terceiros.
+</p>
 
-  <h2>4. Por quanto tempo guardamos</h2>
-  <ul>
-    <li>Dados da conta: enquanto a conta estiver ativa. Ao pedir a exclusão, nome, e-mail, telefone e chave de API são anonimizados e as notificações são apagadas.</li>
-    <li>Chamados e histórico: pelo prazo do contrato com a empresa contratante e pelos prazos legais de prescrição, sem identificação de quem teve a conta excluída.</li>
-    <li>Registros de acesso: 6 meses (Marco Civil, art. 15).</li>
-    <li>Sessão de login no navegador: até 1 hora ou até você sair.</li>
-  </ul>
+<h2>4. Por quanto tempo guardamos</h2>
+<ul>
+  <li>Dados da conta: enquanto a conta estiver ativa. Ao pedir a exclusão, nome, e-mail, telefone e chave de API são anonimizados e as notificações são apagadas.</li>
+  <li>Chamados e histórico: pelo prazo do contrato com a empresa contratante e pelos prazos legais de prescrição, sem identificação de quem teve a conta excluída.</li>
+  <li>Registros de acesso: 6 meses (Marco Civil, art. 15).</li>
+  <li>Sessão de login no navegador: até 1 hora ou até você sair.</li>
+</ul>
 
-  <h2>5. Seus direitos</h2>
-  <p>Pela LGPD (art. 18) você pode, a qualquer momento:</p>
-  <ul>
-    <li>confirmar se tratamos seus dados e acessá-los;</li>
-    <li>corrigir dados incompletos ou desatualizados;</li>
-    <li>pedir anonimização, bloqueio ou eliminação de dados desnecessários;</li>
-    <li>receber seus dados em formato estruturado (portabilidade);</li>
-    <li>saber com quem compartilhamos seus dados;</li>
-    <li>revogar o consentimento (ex.: notificações por WhatsApp), sem prejuízo do uso do sistema;</li>
-    <li>apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD).</li>
-  </ul>
-  <p>
-    Você pode exportar seus dados, revogar consentimentos e excluir sua conta na página
-    <a routerLink="/meus-dados">Meus dados e privacidade</a> (após o login), ou escrever para
-    {{ info.encarregadoEmail }}. Respondemos em até 15 dias.
-  </p>
+<h2>5. Seus direitos</h2>
+<p>Pela LGPD (art. 18) você pode, a qualquer momento:</p>
+<ul>
+  <li>confirmar se tratamos seus dados e acessá-los;</li>
+  <li>corrigir dados incompletos ou desatualizados;</li>
+  <li>pedir anonimização, bloqueio ou eliminação de dados desnecessários;</li>
+  <li>receber seus dados em formato estruturado (portabilidade);</li>
+  <li>saber com quem compartilhamos seus dados;</li>
+  <li>revogar o consentimento (ex.: notificações por WhatsApp), sem prejuízo do uso do sistema;</li>
+  <li>apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD).</li>
+</ul>
+<p>
+  Você pode exportar seus dados, revogar consentimentos e excluir sua conta na página
+  <a routerLink="/meus-dados">Meus dados e privacidade</a> (após o login), ou escrever para
+  {{ info.encarregadoEmail }}. Respondemos em até 15 dias.
+</p>
 
-  <h2>6. Como protegemos os dados</h2>
-  <p>
-    Conexões criptografadas (HTTPS), senhas com hash, chave de API do WhatsApp criptografada no banco,
-    controle de acesso por perfil (cada cliente vê apenas os próprios chamados), bloqueio após tentativas
-    de login repetidas e registros de auditoria. Nenhum sistema é 100% seguro; se ocorrer um incidente
-    relevante, comunicaremos você e a ANPD conforme o art. 48 da LGPD.
-  </p>
+<h2>6. Como protegemos os dados</h2>
+<p>
+  Conexões criptografadas (HTTPS), senhas com hash, chave de API do WhatsApp criptografada no banco,
+  controle de acesso por perfil (cada cliente vê apenas os próprios chamados), bloqueio após tentativas
+  de login repetidas e registros de auditoria. Nenhum sistema é 100% seguro; se ocorrer um incidente
+  relevante, comunicaremos você e a ANPD conforme o art. 48 da LGPD.
+</p>
 
-  <h2>7. Crianças e adolescentes</h2>
-  <p>O sistema é destinado a uso profissional e não deve ser usado por menores de 18 anos.</p>
+<h2>7. Crianças e adolescentes</h2>
+<p>O sistema é destinado a uso profissional e não deve ser usado por menores de 18 anos.</p>
 
-  <h2>8. Alterações</h2>
-  <p>
-    Quando esta Política mudar, a data e a versão no topo serão atualizadas e pediremos um novo aceite
-    no seu próximo acesso.
-  </p>
-</app-legal-shell>
+<h2>8. Alterações</h2>
+<p>
+  Quando esta Política mudar, a data e a versão no topo serão atualizadas e pediremos um novo aceite
+  no seu próximo acesso.
+</p>

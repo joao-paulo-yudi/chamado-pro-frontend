@@ -1,41 +1,39 @@
-<app-legal-shell titulo="Política de Cookies">
-  <p>
-    Esta Política explica quais informações o <strong>{{ info.nomeFantasia }}</strong> guarda no seu
-    navegador e por quê.
-  </p>
+<p>
+  Esta Política explica quais informações o <strong>{{ info.nomeFantasia }}</strong> guarda no seu
+  navegador e por quê.
+</p>
 
-  <h2>1. O que usamos</h2>
-  <p>
-    O sistema <strong>não grava cookies</strong>. Usamos apenas o <em>armazenamento local</em>
-    (localStorage) do navegador, que funciona de forma parecida, e somente para o que é estritamente
-    necessário:
-  </p>
-  <table class="legal-table">
-    <caption>Itens guardados no navegador</caption>
-    <thead>
-      <tr><th scope="col">Nome</th><th scope="col">Categoria</th><th scope="col">Finalidade</th><th scope="col">Duração</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><code>auth_token</code></td><td>Essencial</td><td>Manter você conectado após o login</td><td>Até sair do sistema ou no máximo 1 hora</td></tr>
-      <tr><td><code>cp_cookie_consent</code></td><td>Essencial</td><td>Lembrar sua escolha no banner de cookies</td><td>Até você apagar os dados do navegador ou mudar a escolha</td></tr>
-    </tbody>
-  </table>
+<h2>1. O que usamos</h2>
+<p>
+  O sistema <strong>não grava cookies</strong>. Usamos apenas o <em>armazenamento local</em>
+  (localStorage) do navegador, que funciona de forma parecida, e somente para o que é estritamente
+  necessário:
+</p>
+<table class="legal-table">
+  <caption>Itens guardados no navegador</caption>
+  <thead>
+    <tr><th scope="col">Nome</th><th scope="col">Categoria</th><th scope="col">Finalidade</th><th scope="col">Duração</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>auth_token</code></td><td>Essencial</td><td>Manter você conectado após o login</td><td>Até sair do sistema ou no máximo 1 hora</td></tr>
+    <tr><td><code>cp_cookie_consent</code></td><td>Essencial</td><td>Lembrar sua escolha no banner de cookies</td><td>Até você apagar os dados do navegador ou mudar a escolha</td></tr>
+  </tbody>
+</table>
 
-  <h2>2. O que não usamos</h2>
-  <p>
-    Não usamos cookies ou ferramentas de publicidade, rastreamento, redes sociais ou analytics, e não
-    carregamos fontes, ícones ou scripts de servidores de terceiros. A categoria "Analíticos" no banner
-    existe apenas para que, se um dia uma ferramenta de medição for adotada, ela só seja ativada com
-    o seu consentimento prévio.
-  </p>
+<h2>2. O que não usamos</h2>
+<p>
+  Não usamos cookies ou ferramentas de publicidade, rastreamento, redes sociais ou analytics, e não
+  carregamos fontes, ícones ou scripts de servidores de terceiros. A categoria "Analíticos" no banner
+  existe apenas para que, se um dia uma ferramenta de medição for adotada, ela só seja ativada com
+  o seu consentimento prévio.
+</p>
 
-  <h2>3. Como gerenciar</h2>
-  <ul>
-    <li>Altere sua escolha a qualquer momento pelo link "Preferências de cookies" no rodapé.</li>
-    <li>Você pode apagar o armazenamento local nas configurações do navegador. Ao apagar o <code>auth_token</code>, será necessário fazer login de novo.</li>
-    <li>Os itens essenciais não podem ser desativados sem impedir o funcionamento do login.</li>
-  </ul>
+<h2>3. Como gerenciar</h2>
+<ul>
+  <li>Altere sua escolha a qualquer momento pelo link "Preferências de cookies" no rodapé.</li>
+  <li>Você pode apagar o armazenamento local nas configurações do navegador. Ao apagar o <code>auth_token</code>, será necessário fazer login de novo.</li>
+  <li>Os itens essenciais não podem ser desativados sem impedir o funcionamento do login.</li>
+</ul>
 
-  <h2>4. Contato</h2>
-  <p>Dúvidas: {{ info.encarregadoEmail }}. Veja também a <a routerLink="/privacidade">Política de Privacidade</a>.</p>
-</app-legal-shell>
+<h2>4. Contato</h2>
+<p>Dúvidas: {{ info.encarregadoEmail }}. Veja também a <a routerLink="/privacidade">Política de Privacidade</a>.</p>

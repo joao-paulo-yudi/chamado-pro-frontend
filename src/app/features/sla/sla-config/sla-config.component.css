@@ -1,0 +1,56 @@
+.sla th[scope='row'] {
+  width: 30%;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  background: none;
+  vertical-align: top;
+  padding-top: 18px;
+}
+
+.sla td {
+  vertical-align: top;
+}
+
+.sla .form-error {
+  margin-top: var(--space-2);
+}
+
+.sla--erro {
+  background: var(--danger-bg);
+}
+
+.minutes {
+  position: relative;
+  max-width: 200px;
+  margin-bottom: 4px;
+}
+
+.minutes .form-control {
+  padding-right: 44px;
+  font-variant-numeric: tabular-nums;
+}
+
+.minutes__unit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--subtle);
+  font-size: var(--text-sm);
+  pointer-events: none;
+}
+
+.sla-footer {
+  align-items: center;
+}
+
+.sla-footer__status {
+  flex: 1;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.sla-footer__status i {
+  color: var(--accent);
+}

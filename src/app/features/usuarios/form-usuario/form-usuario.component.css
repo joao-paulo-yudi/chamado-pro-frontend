@@ -1,0 +1,93 @@
+.stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.card__title i {
+  color: #128c4b;
+}
+
+.card__title .opt {
+  color: var(--subtle);
+  font-size: var(--text-sm);
+  font-weight: 400;
+}
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.role {
+  position: relative;
+}
+
+.role input {
+  position: absolute;
+  opacity: 0;
+}
+
+.role__box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.role__box i {
+  margin-bottom: 4px;
+  color: var(--subtle);
+  font-size: 1.1rem;
+}
+
+.role__box strong {
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+.role__box small {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.role__box:hover {
+  border-color: var(--accent);
+}
+
+.role input:checked + .role__box {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.role input:checked + .role__box i {
+  color: var(--accent);
+}
+
+.role input:focus-visible + .role__box {
+  box-shadow: var(--focus-ring);
+}
+
+.form-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.form-bar__spacer {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .roles {
+    grid-template-columns: 1fr;
+  }
+}

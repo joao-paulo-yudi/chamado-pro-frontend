@@ -1,0 +1,115 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-header__title">Usuários</h1>
+      <p class="page-header__subtitle">Gerencie clientes, técnicos e administradores do sistema.</p>
+    </div>
+    <div class="page-header__actions">
+      <a routerLink="/usuarios/novo" class="btn btn--primary">
+        <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Novo usuário
+      </a>
+    </div>
+  </header>
+
+  <section class="card" aria-label="Lista de usuários">
+    <div class="tabs role-tabs" role="group" aria-label="Filtrar por perfil">
+      <button type="button" class="tab" [attr.aria-pressed]="papel() === ''" (click)="papel.set('')">
+        Todos <span class="tab__count">{{ contagem()[''] }}</span>
+      </button>
+      @for (r of roles; track r) {
+        <button type="button" class="tab" [attr.aria-pressed]="papel() === r" (click)="papel.set(r)">
+          {{ r | label: 'role' }} <span class="tab__count">{{ contagem()[r] || 0 }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar__search input-icon">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <label for="busca-usuarios" class="sr-only">Buscar usuários</label>
+        <input
+          id="busca-usuarios"
+          type="search"
+          class="form-control"
+          placeholder="Buscar por nome ou e-mail..."
+          [ngModel]="busca()"
+          (ngModelChange)="busca.set($event)"
+        />
+      </div>
+      <span class="toolbar__spacer"></span>
+      <span class="toolbar__count">{{ filtrados().length }} de {{ usuarios().length }}</span>
+    </div>
+
+    @if (carregando()) {
+      <div class="skeleton-list" role="status" aria-label="Carregando usuários">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="skeleton-row">
+            <span class="skeleton skeleton--avatar"></span>
+            <span class="skeleton" style="width: 30%"></span>
+            <span class="skeleton" style="width: 20%"></span>
+          </div>
+        }
+      </div>
+    } @else if (erro()) {
+      <app-empty-state icon="fa-plug-circle-exclamation" titulo="Não foi possível carregar os usuários">
+        <button type="button" class="btn btn--secondary" (click)="carregar()">Tentar novamente</button>
+      </app-empty-state>
+    } @else if (filtrados().length === 0) {
+      <app-empty-state icon="fa-users" titulo="Nenhum usuário encontrado" descricao="Ajuste a busca ou o filtro de perfil." />
+    } @else {
+      <div class="table-wrap">
+        <table class="table table--hover users">
+          <caption class="sr-only">Usuários</caption>
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Perfil</th>
+              <th scope="col">Nível</th>
+              <th scope="col">WhatsApp</th>
+              <th scope="col"><span class="sr-only">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of filtrados(); track u.id) {
+              <tr (click)="editar(u, $event)">
+                <td>
+                  <div class="user">
+                    <span class="avatar" aria-hidden="true">{{ u.nome | initials }}</span>
+                    <div class="user__info">
+                      <strong>{{ u.nome }}</strong>
+                      <span>{{ u.email }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td><app-enum-badge kind="role" [value]="u.tipoUsuario" [icone]="true" /></td>
+                <td>
+                  @if (u.tipoUsuario === 'TECNICO') {
+                    <span class="badge badge--brand">{{ u.nivelTecnico || 'N1' }}</span>
+                  } @else {
+                    <span class="muted">—</span>
+                  }
+                </td>
+                <td>
+                  @if (u.consentimentoWhatsapp) {
+                    <span class="badge badge--success"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Ativo</span>
+                  } @else {
+                    <span class="muted text-sm">Inativo</span>
+                  }
+                </td>
+                <td class="actions">
+                  <a
+                    [routerLink]="['/usuarios', u.id, 'editar']"
+                    class="btn btn--ghost btn--sm"
+                    [attr.aria-label]="'Editar ' + u.nome"
+                  >
+                    <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i> Editar
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

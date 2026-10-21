@@ -15,9 +15,31 @@
     "types": [
       "node",
       "jasmine"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@layout/*": [
+        "src/app/layout/*"
+      ],
+      "@features/*": [
+        "src/app/features/*"
+      ]
+    },
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
 }

@@ -1,40 +1,20 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of, shareReplay, tap } from 'rxjs';
 import { ApiService } from './api.service';
-import { AuthService } from '../../features/auth/services/auth.service';
-
-export interface Perfil {
-  id: number;
-  nome: string;
-  email: string;
-  tipoUsuario: string;
-  nivelTecnico?: string | null;
-  telefone?: string | null;
-  whatsappConfigurado: boolean;
-  consentimentoWhatsapp: boolean;
-  dataConsentimentoWhatsapp?: string | null;
-  versaoTermosAceita?: string | null;
-  dataAceiteTermos?: string | null;
-  versaoTermosAtual: string;
-}
-
-export interface ConsentimentoRequest {
-  versaoTermos: string;
-  aceiteTermos: boolean;
-  consentimentoWhatsapp: boolean;
-}
+import { AuthService } from '../auth/auth.service';
+import { ConsentimentoRequest, Perfil } from '../models';
 
 /**
- * Dados do usuário autenticado (GET /usuarios/me). Substitui a antiga prática
- * de baixar a lista de TODOS os usuários só para descobrir o próprio id.
+ * Dados do usuário autenticado (GET /usuarios/me), em cache por token.
+ * Evita baixar a lista de todos os usuários só para descobrir o próprio id.
  */
 @Injectable({ providedIn: 'root' })
 export class PerfilService {
+  private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
+
   private cache$?: Observable<Perfil>;
   private cacheToken: string | null = null;
-
-  constructor(private api: ApiService, private http: HttpClient, private auth: AuthService) {}
 
   me(): Observable<Perfil> {
     const token = this.auth.getToken();
@@ -50,20 +30,14 @@ export class PerfilService {
   }
 
   registrarConsentimento(req: ConsentimentoRequest): Observable<Perfil> {
-    return this.api.put<Perfil>('/usuarios/me/consentimentos', req).pipe(
-      tap(p => this.cache$ = of(p))
-    );
+    return this.api.put<Perfil>('/usuarios/me/consentimentos', req).pipe(tap(p => (this.cache$ = of(p))));
   }
 
   exportarDados(): Observable<Blob> {
-    return this.http.get('/usuarios/me/exportar', { responseType: 'blob' });
+    return this.api.getBlob('/usuarios/me/exportar');
   }
 
-  excluirConta(): Observable<void> {
-    return this.api.delete<void>('/usuarios/me');
-  }
-
-  limpar() {
+  limpar(): void {
     this.cache$ = undefined;
     this.cacheToken = null;
   }

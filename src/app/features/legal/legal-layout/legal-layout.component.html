@@ -1,0 +1,42 @@
+<a class="skip-link" href="#conteudo" (click)="pularParaConteudo($event)">Pular para o conteúdo</a>
+
+<div class="legal">
+  <header class="legal__topbar">
+    <a routerLink="/" class="legal__logo">
+      <img src="assets/logo-vertical.svg" alt="ChamadoPro - página inicial" />
+    </a>
+    <div class="legal__topbar-actions">
+      <button type="button" class="btn btn--ghost" (click)="voltar()">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar
+      </button>
+      @if (!auth.isAuthenticated()) {
+        <a routerLink="/login" class="btn btn--primary">Entrar</a>
+      }
+    </div>
+  </header>
+
+  <div class="legal__body">
+    <nav class="legal__nav" aria-label="Documentos legais">
+      <p class="legal__nav-title">Documentos</p>
+      <ul>
+        @for (d of documentos; track d.link) {
+          <li>
+            <a [routerLink]="d.link" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <i class="fa-solid {{ d.icon }}" aria-hidden="true"></i> {{ d.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <main id="conteudo" class="legal__content card" tabindex="-1">
+      <header class="legal__head">
+        <h1>{{ titulo() }}</h1>
+        <p class="legal__updated">Última atualização: {{ atualizacao }}</p>
+      </header>
+      <router-outlet />
+    </main>
+  </div>
+
+  <app-site-footer />
+</div>

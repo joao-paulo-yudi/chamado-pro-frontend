@@ -1,0 +1,146 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-header__title">Dashboard</h1>
+      <p class="page-header__subtitle">
+        Visão geral do atendimento
+        @if (atualizadoEm(); as em) {
+          · atualizado às {{ em | date: 'HH:mm' }}
+        }
+      </p>
+    </div>
+    <div class="page-header__actions">
+      <button type="button" class="btn btn--secondary" (click)="carregar()" [disabled]="carregando()">
+        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Atualizar
+      </button>
+      <a routerLink="/chamados" class="btn btn--primary">Ver chamados</a>
+    </div>
+  </header>
+
+  @if (erro() && !dados()) {
+    <div class="card">
+      <app-empty-state icon="fa-plug-circle-exclamation" titulo="Não foi possível carregar o painel" descricao="Verifique sua conexão e tente novamente.">
+        <button type="button" class="btn btn--secondary" (click)="carregar()">Tentar novamente</button>
+      </app-empty-state>
+    </div>
+  } @else if (!dados()) {
+    <div class="kpis" role="status" aria-label="Carregando indicadores">
+      <div class="card hero skeleton-card"><span class="skeleton" style="width: 40%"></span><span class="skeleton skeleton--big"></span></div>
+      <div class="tiles">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="card tile skeleton-card"><span class="skeleton" style="width: 60%"></span><span class="skeleton skeleton--num"></span></div>
+        }
+      </div>
+    </div>
+  } @else {
+    @if (dados(); as d) {
+      <div class="kpis" [class.is-refreshing]="carregando()">
+        <!-- Número principal: cumprimento do SLA -->
+        <section class="card hero" aria-labelledby="hero-titulo">
+          <h2 id="hero-titulo" class="hero__label">SLA cumprido</h2>
+          <p class="hero__value">{{ d.percentualSlaCumprido | number: '1.0-1' }}%</p>
+          <div
+            class="meter"
+            role="meter"
+            aria-labelledby="hero-titulo"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="d.percentualSlaCumprido"
+          >
+            <span class="meter__fill" [style.width.%]="d.percentualSlaCumprido"></span>
+          </div>
+          <dl class="hero__facts">
+            <div>
+              <dt>Tempo médio de resolução</dt>
+              <dd>{{ d.tempoMedioResolucaoHoras | number: '1.0-1' }} h</dd>
+            </div>
+            <div>
+              <dt>Precisam de atenção</dt>
+              <dd>
+                @if (slaAtencao() > 0) {
+                  <a routerLink="/chamados" [queryParams]="{ visao: 'sla' }">
+                    <i class="fa-solid fa-triangle-exclamation attention" aria-hidden="true"></i>
+                    {{ slaAtencao() }} {{ slaAtencao() === 1 ? 'chamado' : 'chamados' }}
+                  </a>
+                } @else {
+                  <i class="fa-solid fa-circle-check ok" aria-hidden="true"></i> Nenhum
+                }
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- Indicadores por status -->
+        <div class="tiles">
+          @for (t of tiles(); track t.label) {
+            @if (t.link) {
+              <a class="card tile tile--link" [routerLink]="t.link" [queryParams]="t.query">
+                <span class="tile__label"><i class="fa-solid {{ t.icon }}" aria-hidden="true"></i> {{ t.label }}</span>
+                <span class="tile__value">{{ t.valor }}</span>
+                <span class="tile__go" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+              </a>
+            } @else {
+              <div class="card tile">
+                <span class="tile__label"><i class="fa-solid {{ t.icon }}" aria-hidden="true"></i> {{ t.label }}</span>
+                <span class="tile__value">{{ t.valor }}</span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="charts">
+        <section class="card" aria-labelledby="g-sla">
+          <div class="card__header">
+            <div>
+              <h2 id="g-sla" class="card__title">Situação do SLA</h2>
+              <p class="card__subtitle">Chamados por situação do prazo</p>
+            </div>
+          </div>
+          <div class="card__body"><app-bar-list [itens]="slaItens()" vazio="Sem dados de SLA ainda." /></div>
+        </section>
+
+        <section class="card" aria-labelledby="g-prioridade">
+          <div class="card__header">
+            <div>
+              <h2 id="g-prioridade" class="card__title">Por prioridade</h2>
+              <p class="card__subtitle">Quantidade de chamados</p>
+            </div>
+          </div>
+          <div class="card__body"><app-bar-list [itens]="prioridadeItens()" vazio="Sem dados de prioridade ainda." /></div>
+        </section>
+
+        <section class="card" aria-labelledby="g-categoria">
+          <div class="card__header">
+            <div>
+              <h2 id="g-categoria" class="card__title">Por categoria</h2>
+              <p class="card__subtitle">Do maior para o menor volume</p>
+            </div>
+          </div>
+          <div class="card__body"><app-bar-list [itens]="categoriaItens()" [ordenar]="true" vazio="Sem dados de categoria ainda." /></div>
+        </section>
+
+        <section class="card" aria-labelledby="g-nivel">
+          <div class="card__header">
+            <div>
+              <h2 id="g-nivel" class="card__title">Por nível de atendimento</h2>
+              <p class="card__subtitle">Onde os chamados estão hoje</p>
+            </div>
+          </div>
+          <div class="card__body"><app-bar-list [itens]="nivelItens()" vazio="Sem dados de nível ainda." /></div>
+        </section>
+
+        <section class="card charts__wide" aria-labelledby="g-tecnico">
+          <div class="card__header">
+            <div>
+              <h2 id="g-tecnico" class="card__title">Por técnico</h2>
+              <p class="card__subtitle">Chamados atribuídos a cada técnico</p>
+            </div>
+          </div>
+          <div class="card__body"><app-bar-list [itens]="tecnicoItens()" [ordenar]="true" vazio="Nenhum chamado atribuído ainda." /></div>
+        </section>
+      </div>
+    }
+  }
+</div>

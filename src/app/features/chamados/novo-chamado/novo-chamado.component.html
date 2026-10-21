@@ -1,0 +1,132 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <a routerLink="/chamados" class="back-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Chamados</a>
+      <h1 class="page-header__title">Abrir novo chamado</h1>
+      <p class="page-header__subtitle">Descreva o problema e nossa equipe de suporte entrará em contato.</p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <form class="card" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+      <div class="card__body stack-lg">
+        <div class="form-field">
+          <label for="titulo" class="form-label">Título <span class="req" aria-hidden="true">*</span></label>
+          <input
+            id="titulo"
+            class="form-control"
+            formControlName="titulo"
+            placeholder="Ex.: Impressora do 2º andar não imprime"
+            maxlength="200"
+            autocomplete="off"
+            aria-required="true"
+            [attr.aria-invalid]="invalido('titulo')"
+            aria-describedby="titulo-erro"
+          />
+          <span id="titulo-erro" class="form-error" aria-live="polite">
+            @if (invalido('titulo')) {
+              Informe um título que resuma o problema.
+            }
+          </span>
+        </div>
+
+        <fieldset class="fieldset form-field">
+          <legend class="form-label">Categoria <span class="opt">(opcional)</span></legend>
+          <div class="tiles">
+            @for (c of categorias; track c) {
+              <label class="tile">
+                <input type="radio" formControlName="categoria" [value]="c" name="categoria" />
+                <span class="tile__box">
+                  <i class="fa-solid {{ categoriaMeta[c].icon }}" aria-hidden="true"></i>
+                  {{ categoriaMeta[c].label }}
+                </span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="fieldset form-field">
+          <legend class="form-label">Prioridade</legend>
+          <div class="segmented">
+            @for (p of prioridades; track p) {
+              <label>
+                <input
+                  type="radio"
+                  name="prioridade"
+                  [value]="p"
+                  [checked]="form.controls.prioridade.value === p"
+                  (change)="escolherPrioridade(p)"
+                />
+                <span><i class="fa-solid {{ prioridadeMeta[p].icon }}" aria-hidden="true"></i> {{ prioridadeMeta[p].label }}</span>
+              </label>
+            }
+          </div>
+          <span class="form-hint">
+            @if (form.controls.categoria.value && !prioridadeManual()) {
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+              Sugerida automaticamente para {{ categoriaMeta[form.controls.categoria.value].label }}. Você pode ajustar.
+            } @else if (prioridadeManual() && form.controls.prioridade.value !== sugestao()) {
+              Sugestão para a categoria: {{ prioridadeMeta[sugestao()].label }}.
+            } @else {
+              A prioridade define os prazos de atendimento (SLA).
+            }
+          </span>
+        </fieldset>
+
+        <div class="form-field">
+          <label for="descricao" class="form-label">Descrição <span class="req" aria-hidden="true">*</span></label>
+          <textarea
+            id="descricao"
+            class="form-control"
+            formControlName="descricao"
+            rows="7"
+            maxlength="5000"
+            placeholder="O que aconteceu? Desde quando? Alguma mensagem de erro?"
+            aria-required="true"
+            [attr.aria-invalid]="invalido('descricao')"
+            aria-describedby="descricao-dica descricao-erro"
+          ></textarea>
+          <div class="field-foot">
+            <span id="descricao-dica" class="form-hint">
+              Não inclua senhas, dados de saúde, documentos ou dados pessoais de terceiros.
+            </span>
+            <span class="form-hint counter">{{ descricaoValor().length }}/5000</span>
+          </div>
+          <span id="descricao-erro" class="form-error" aria-live="polite">
+            @if (invalido('descricao')) {
+              Descreva o problema para que possamos ajudar.
+            }
+          </span>
+        </div>
+      </div>
+
+      <div class="card__footer">
+        <a routerLink="/chamados" class="btn btn--secondary">Cancelar</a>
+        <button type="submit" class="btn btn--primary" [disabled]="enviando()">
+          @if (enviando()) {
+            <span class="spinner" aria-hidden="true"></span> Enviando...
+          } @else {
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Abrir chamado
+          }
+        </button>
+      </div>
+    </form>
+
+    <aside class="tips card" aria-labelledby="dicas-titulo">
+      <div class="card__body">
+        <h2 id="dicas-titulo" class="tips__title">
+          <i class="fa-regular fa-lightbulb" aria-hidden="true"></i> Dicas para um atendimento rápido
+        </h2>
+        <ul class="tips__list">
+          <li>Use um título curto e específico.</li>
+          <li>Informe o local, o equipamento ou o sistema afetado.</li>
+          <li>Conte os passos que levaram ao problema.</li>
+          <li>Copie a mensagem de erro, se houver.</li>
+        </ul>
+        <p class="tips__note">
+          Você será avisado a cada atualização e poderá conversar com o técnico pelos comentários do chamado.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>

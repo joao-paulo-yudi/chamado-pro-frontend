@@ -1,0 +1,106 @@
+<div class="page page--narrow">
+  <header class="page-header">
+    <div>
+      <h1 class="page-header__title">Meus dados e privacidade</h1>
+      <p class="page-header__subtitle">Veja seus dados, gerencie consentimentos e exerça seus direitos previstos na LGPD.</p>
+    </div>
+  </header>
+
+  @if (erro()) {
+    <p class="alert alert--danger" role="alert">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Não foi possível carregar seus dados.
+    </p>
+  } @else if (!perfil()) {
+    <app-loading-state mensagem="Carregando seus dados..." />
+  } @else {
+  @if (perfil(); as p) {
+    <!-- Perfil -->
+    <section class="card" aria-labelledby="titulo-dados">
+      <div class="profile">
+        <span class="avatar avatar--lg" aria-hidden="true">{{ p.nome | initials }}</span>
+        <div class="profile__info">
+          <h2 id="titulo-dados" class="profile__name">{{ p.nome }}</h2>
+          <p class="profile__email">{{ p.email }}</p>
+        </div>
+        <app-enum-badge kind="role" [value]="p.tipoUsuario" [icone]="true" />
+      </div>
+      <div class="card__body">
+        <dl class="meta-list">
+          <dt>Nome</dt>
+          <dd>{{ p.nome }}</dd>
+          <dt>E-mail</dt>
+          <dd>{{ p.email }}</dd>
+          @if (p.nivelTecnico) {
+            <dt>Nível técnico</dt>
+            <dd>{{ p.nivelTecnico }}</dd>
+          }
+          <dt>Telefone (WhatsApp)</dt>
+          <dd>{{ p.telefone || 'Não informado' }}</dd>
+          <dt>Termos aceitos</dt>
+          <dd>
+            Versão {{ p.versaoTermosAceita || '—' }}
+            @if (p.dataAceiteTermos) {
+              em {{ p.dataAceiteTermos | date: 'dd/MM/yyyy HH:mm' }}
+            }
+          </dd>
+        </dl>
+        <p class="form-hint note">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          Para corrigir nome, e-mail ou telefone, fale com o administrador do sistema.
+        </p>
+      </div>
+    </section>
+
+    <!-- WhatsApp -->
+    <section class="card" aria-labelledby="titulo-whatsapp">
+      <div class="card__header">
+        <div>
+          <h2 id="titulo-whatsapp" class="card__title">Notificações por WhatsApp</h2>
+          <p class="card__subtitle">Avisos dos seus chamados via serviço de terceiro CallMeBot.</p>
+        </div>
+      </div>
+      <div class="card__body stack">
+        <label class="switch" for="whatsapp">
+          <input id="whatsapp" type="checkbox" role="switch" name="whatsapp" [(ngModel)]="consentimentoWhatsapp" />
+          <span class="switch__track" aria-hidden="true"><span class="switch__thumb"></span></span>
+          <span>Receber avisos dos meus chamados por WhatsApp</span>
+        </label>
+        @if (!p.whatsappConfigurado) {
+          <p class="form-hint">Seu telefone ainda não foi cadastrado pelo administrador; a opção só terá efeito depois disso.</p>
+        }
+        @if (p.dataConsentimentoWhatsapp) {
+          <p class="form-hint">Última alteração: {{ p.dataConsentimentoWhatsapp | date: 'dd/MM/yyyy HH:mm' }}</p>
+        }
+      </div>
+      <div class="card__footer">
+        <button
+          type="button"
+          class="btn btn--primary"
+          (click)="salvarWhatsapp()"
+          [disabled]="salvando() || consentimentoWhatsapp === p.consentimentoWhatsapp"
+        >
+          Salvar preferência
+        </button>
+      </div>
+    </section>
+
+    <!-- Exportação -->
+    <section class="card" aria-labelledby="titulo-exportar">
+      <div class="card__header">
+        <div>
+          <h2 id="titulo-exportar" class="card__title">Exportar meus dados</h2>
+          <p class="card__subtitle">Arquivo JSON com seu cadastro, chamados, comentários e notificações.</p>
+        </div>
+        <button type="button" class="btn btn--secondary" (click)="exportar()" [disabled]="exportando()">
+          <i class="fa-solid fa-download" aria-hidden="true"></i> Baixar meus dados
+        </button>
+      </div>
+    </section>
+
+    <p class="form-hint">
+      Saiba mais na <a routerLink="/privacidade">Política de Privacidade</a>. Para outras solicitações, fale com o
+      encarregado de dados indicado na política.
+    </p>
+  }
+  }
+</div>

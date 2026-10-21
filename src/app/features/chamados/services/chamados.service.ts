@@ -1,52 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-
-export interface Chamado {
-  id: number;
-  titulo: string;
-  descricao: string;
-  status: string;
-  categoria: string;
-  prioridade?: string;
-  nivelAtual?: string;
-  statusSla?: string;
-  dataCriacao?: string;
-  dataPrimeiraResposta?: string;
-  prazoPrimeiraResposta?: string;
-  prazoResolucao?: string;
-  avaliacao?: number;
-  feedback?: string;
-  ultimaAtualizacao?: string;
-  clienteId?: number;
-  clienteNome?: string;
-  tecnicoId?: number;
-  tecnicoNome?: string;
-  adminId?: number;
-  adminNome?: string;
-}
-
-export interface Historico {
-  id: number;
-  chamadoId: number;
-  usuarioNome: string;
-  tipoEvento: string;
-  descricao: string;
-  dataHora: string;
-}
-
-export interface EscalonarRequest {
-  novoNivel?: string | null;
-  tecnicoId?: number | null;
-  motivo?: string | null;
-}
+import { ApiService } from '@core/services/api.service';
+import { Chamado, EscalonarRequest, Historico, NovoChamadoRequest } from '@core/models';
 
 @Injectable({ providedIn: 'root' })
 export class ChamadosService {
+  private readonly api = inject(ApiService);
   private readonly apiUrl = '/chamados';
 
-  constructor(private api: ApiService) { }
-
+  /** Fila completa (apenas equipe de atendimento). */
   listar(): Observable<Chamado[]> {
     return this.api.get<Chamado[]>(this.apiUrl);
   }
@@ -55,7 +17,8 @@ export class ChamadosService {
     return this.api.get<Chamado>(`${this.apiUrl}/${id}`);
   }
 
-  criar(chamado: { titulo: string; descricao: string; categoria?: string; prioridade?: string; clienteId?: number }): Observable<Chamado> {
+  /** O cliente do chamado é definido no servidor a partir do usuário autenticado. */
+  criar(chamado: NovoChamadoRequest): Observable<Chamado> {
     return this.api.post<Chamado>(this.apiUrl, chamado);
   }
 
@@ -75,8 +38,8 @@ export class ChamadosService {
     return this.api.get<Chamado[]>(`${this.apiUrl}/tecnico/${tecnicoId}`);
   }
 
-  atribuirTecnico(id: number, tecnicoId: number, chamado: Partial<Chamado>): Observable<Chamado> {
-    return this.api.put<Chamado>(`${this.apiUrl}/${id}/atribuir-tecnico/${tecnicoId}`, chamado);
+  atribuirTecnico(id: number, tecnicoId: number): Observable<Chamado> {
+    return this.api.put<Chamado>(`${this.apiUrl}/${id}/atribuir-tecnico/${tecnicoId}`, {});
   }
 
   /**
@@ -87,9 +50,7 @@ export class ChamadosService {
     return this.api.put<Chamado>(`${this.apiUrl}/${id}/escalonar`, request);
   }
 
-  /**
-   * Lista o histórico (auditoria) de eventos do chamado, mais recentes primeiro.
-   */
+  /** Histórico (auditoria) de eventos do chamado, mais recentes primeiro. */
   historico(id: number): Observable<Historico[]> {
     return this.api.get<Historico[]>(`${this.apiUrl}/${id}/historico`);
   }

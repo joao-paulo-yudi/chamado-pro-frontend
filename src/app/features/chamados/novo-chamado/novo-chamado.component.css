@@ -1,0 +1,122 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: var(--space-2);
+}
+
+.tile {
+  position: relative;
+}
+
+.tile input {
+  position: absolute;
+  opacity: 0;
+}
+
+.tile__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.tile__box i {
+  color: var(--subtle);
+  font-size: 1.25rem;
+}
+
+.tile__box:hover {
+  border-color: var(--accent);
+}
+
+.tile input:checked + .tile__box {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--brand-900);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.tile input:checked + .tile__box i {
+  color: var(--accent);
+}
+
+.tile input:focus-visible + .tile__box {
+  box-shadow: var(--focus-ring);
+}
+
+.field-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.counter {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.tips {
+  position: sticky;
+  top: calc(var(--topbar-height) + var(--space-6));
+  background: var(--accent-soft);
+  border-color: var(--accent-soft-2);
+}
+
+.tips__title {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--brand-900);
+}
+
+.tips__title i {
+  color: var(--accent);
+}
+
+.tips__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  padding-left: var(--space-5);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+}
+
+.tips__note {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tips {
+    position: static;
+  }
+}

@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Conteúdo das páginas legais (políticas, termos, licenças)
+   Os textos ficam em templates próprios, por isso o estilo é global.
+   ========================================================================== */
+
+.legal-prose {
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.legal-prose > * + * {
+  margin-top: var(--space-3);
+}
+
+.legal-prose h2 {
+  margin-top: var(--space-8);
+  font-size: var(--text-lg);
+  scroll-margin-top: var(--space-6);
+}
+
+.legal-prose ul,
+.legal-prose ol {
+  padding-left: var(--space-6);
+}
+
+.legal-prose li + li {
+  margin-top: var(--space-1);
+}
+
+.legal-table {
+  width: 100%;
+  margin: var(--space-4) 0;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.legal-table caption {
+  margin-bottom: 6px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.legal-table th,
+.legal-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.legal-table th {
+  background: var(--surface-2);
+}
+
+@media (max-width: 640px) {
+  .legal-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

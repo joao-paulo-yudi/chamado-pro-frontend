@@ -1,35 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BUSINESS_INFO } from '../../business-info';
-import { CookieConsentService } from '../../../core/services/cookie-consent.service';
+import { CookieConsentService } from '@core/services/cookie-consent.service';
 
 @Component({
   selector: 'app-site-footer',
   standalone: true,
   imports: [RouterLink],
   template: `
-    <footer class="site-footer">
-      <nav class="footer-links" aria-label="Informações legais">
-        <a routerLink="/privacidade">Política de Privacidade</a>
+    <footer class="footer">
+      <nav class="footer__links" aria-label="Informações legais">
+        <a routerLink="/privacidade">Privacidade</a>
         <a routerLink="/termos">Termos de Uso</a>
-        <a routerLink="/cookies">Política de Cookies</a>
-        <a routerLink="/reembolso">Política de Reembolso</a>
+        <a routerLink="/cookies">Cookies</a>
+        <a routerLink="/reembolso">Reembolso</a>
         <a routerLink="/licencas">Licenças</a>
         <button type="button" class="link-button" (click)="preferenciasCookies()">Preferências de cookies</button>
       </nav>
-      <address class="footer-business">
-        <strong>{{ info.nomeFantasia }}</strong> · {{ info.razaoSocial }} · CNPJ {{ info.cnpj }}<br />
-        {{ info.endereco }}<br />
-        Contato: {{ info.emailContato }} · {{ info.telefone }} ·
-        Encarregado de dados (DPO): {{ info.encarregadoEmail }}
-      </address>
     </footer>
+  `,
+  styles: `
+    .footer {
+      padding: var(--space-5) var(--space-6);
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: var(--text-xs);
+    }
+    .footer__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-4);
+    }
+    .footer__links a,
+    .footer__links .link-button {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .footer__links a:hover,
+    .footer__links .link-button:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
   `,
 })
 export class SiteFooterComponent {
-  info = BUSINESS_INFO;
-
-  constructor(private cookies: CookieConsentService) {}
+  private readonly cookies = inject(CookieConsentService);
 
   preferenciasCookies() {
     this.cookies.abrirPreferencias();

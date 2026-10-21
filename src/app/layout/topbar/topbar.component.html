@@ -1,0 +1,73 @@
+<header class="topbar">
+  <button type="button" class="btn btn--ghost btn--icon topbar__menu" (click)="abrirMenu.emit()" aria-label="Abrir menu">
+    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+  </button>
+
+  <a routerLink="/" class="topbar__logo">
+    <img src="assets/logo-vertical.svg" alt="ChamadoPro - página inicial" />
+  </a>
+
+  <form class="topbar__search" role="search" (ngSubmit)="buscar()">
+    <label for="busca-global" class="sr-only">Buscar chamados</label>
+    <div class="input-icon">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input
+        id="busca-global"
+        name="busca"
+        class="form-control"
+        type="search"
+        placeholder="Buscar chamado por número ou título..."
+        autocomplete="off"
+        maxlength="200"
+        [(ngModel)]="busca"
+      />
+    </div>
+  </form>
+
+  <div class="topbar__actions">
+    @if (auth.isAdmin() || auth.isCliente()) {
+      <a routerLink="/chamados/novo" class="btn btn--accent topbar__new" aria-label="Novo chamado">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        <span>Novo chamado</span>
+      </a>
+    }
+
+    <app-notificacao-bell />
+
+    <div class="user-menu">
+      <button
+        type="button"
+        class="user-menu__trigger"
+        (click)="toggleMenuUsuario()"
+        [attr.aria-expanded]="menuUsuarioAberto()"
+        aria-controls="menu-usuario"
+        aria-haspopup="true"
+      >
+        <span class="avatar avatar--sm" aria-hidden="true">{{ perfil()?.nome | initials }}</span>
+        <span class="user-menu__name">
+          <span class="truncate">{{ perfil()?.nome || 'Minha conta' }}</span>
+          <small>{{ auth.role() | label: 'role' }}</small>
+        </span>
+        <i class="fa-solid fa-chevron-down user-menu__chevron" aria-hidden="true"></i>
+      </button>
+
+      @if (menuUsuarioAberto()) {
+        <div id="menu-usuario" class="user-menu__panel">
+          <div class="user-menu__head">
+            <span class="avatar" aria-hidden="true">{{ perfil()?.nome | initials }}</span>
+            <div class="user-menu__who">
+              <strong class="truncate">{{ perfil()?.nome }}</strong>
+              <span class="truncate">{{ perfil()?.email }}</span>
+            </div>
+          </div>
+          <a routerLink="/meus-dados" class="user-menu__item" (click)="menuUsuarioAberto.set(false)">
+            <i class="fa-solid fa-user-shield" aria-hidden="true"></i> Meus dados e privacidade
+          </a>
+          <button type="button" class="user-menu__item user-menu__item--danger" (click)="sair()">
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>
