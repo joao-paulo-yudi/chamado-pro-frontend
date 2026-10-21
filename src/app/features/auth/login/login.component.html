@@ -1,0 +1,103 @@
+<div class="login">
+  <main id="conteudo" class="login__form-side" tabindex="-1">
+    <img src="assets/logo-vertical.svg" alt="ChamadoPro" class="login__logo" />
+
+    <div class="login__box">
+      <h1 class="login__title">Bem-vindo de volta</h1>
+      <p class="login__subtitle">Entre com seu e-mail e senha para acessar a central de suporte.</p>
+
+      @if (erro()) {
+        <p class="alert alert--danger" role="alert">
+          <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> {{ erro() }}
+        </p>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="entrar()" class="login__form" novalidate>
+        <div class="form-field">
+          <label for="email" class="form-label">E-mail</label>
+          <div class="input-icon">
+            <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+            <input
+              id="email"
+              type="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="voce@empresa.com.br"
+              autocomplete="username"
+              maxlength="254"
+              aria-required="true"
+              [attr.aria-invalid]="invalido('email')"
+              aria-describedby="email-erro"
+            />
+          </div>
+          <span id="email-erro" class="form-error">
+            @if (invalido('email')) {
+              {{ form.controls.email.hasError('required') ? 'Informe seu e-mail.' : 'E-mail inválido.' }}
+            }
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="senha" class="form-label">Senha</label>
+          <div class="input-icon">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            <input
+              id="senha"
+              class="form-control"
+              formControlName="senha"
+              placeholder="Sua senha"
+              autocomplete="current-password"
+              maxlength="128"
+              aria-required="true"
+              [type]="mostrarSenha() ? 'text' : 'password'"
+              [attr.aria-invalid]="invalido('senha')"
+              aria-describedby="senha-erro"
+            />
+            <button
+              type="button"
+              class="input-icon__action"
+              (click)="mostrarSenha.set(!mostrarSenha())"
+              [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+              [attr.aria-pressed]="mostrarSenha()"
+            >
+              <i class="fa-regular" [class.fa-eye]="!mostrarSenha()" [class.fa-eye-slash]="mostrarSenha()" aria-hidden="true"></i>
+            </button>
+          </div>
+          <span id="senha-erro" class="form-error">
+            @if (invalido('senha')) { Informe sua senha. }
+          </span>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="carregando()">
+          @if (carregando()) {
+            <span class="spinner" aria-hidden="true"></span> Entrando...
+          } @else {
+            Entrar
+          }
+        </button>
+      </form>
+
+      <p class="login__help">
+        <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+        Esqueceu a senha ou não tem acesso? Fale com o administrador do sistema.
+      </p>
+    </div>
+
+    <p class="login__legal">
+      Ao entrar, você concorda com os <a routerLink="/termos">Termos de Uso</a> e declara ter lido a
+      <a routerLink="/privacidade">Política de Privacidade</a> e a <a routerLink="/cookies">Política de Cookies</a>.
+    </p>
+  </main>
+
+  <aside class="login__brand" aria-hidden="true">
+    <div class="login__brand-inner">
+      <img src="assets/logo.svg" alt="" class="login__brand-logo" />
+      <p class="login__tagline">Suporte organizado, do primeiro contato à solução.</p>
+      <ul class="login__features">
+        <li><i class="fa-solid fa-ticket"></i> Abra e acompanhe chamados em tempo real</li>
+        <li><i class="fa-solid fa-stopwatch"></i> Prazos de atendimento (SLA) sob controle</li>
+        <li><i class="fa-solid fa-comments"></i> Converse direto com a equipe técnica</li>
+      </ul>
+    </div>
+  </aside>
+</div>

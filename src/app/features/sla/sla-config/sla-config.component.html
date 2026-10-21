@@ -1,0 +1,110 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-header__title">Configuração de SLA</h1>
+      <p class="page-header__subtitle">
+        Prazos máximos, por prioridade, para a primeira resposta e para a resolução completa do chamado.
+      </p>
+    </div>
+  </header>
+
+  @if (carregando()) {
+    <app-loading-state mensagem="Carregando configurações..." />
+  } @else if (erroCarga()) {
+    <p class="alert alert--danger" role="alert">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+      Não foi possível carregar a configuração de SLA.
+      <button type="button" class="link-button" (click)="carregar()">Tentar novamente</button>
+    </p>
+  } @else {
+    <form class="card" (ngSubmit)="salvar()">
+      <div class="table-wrap">
+        <table class="table sla">
+          <caption class="sr-only">Prazos de SLA por prioridade, em minutos</caption>
+          <thead>
+            <tr>
+              <th scope="col">Prioridade</th>
+              <th scope="col">Primeira resposta</th>
+              <th scope="col">Resolução</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of configs(); track c.prioridade) {
+              <tr [class.sla--erro]="erro(c)">
+                <th scope="row">
+                  <app-enum-badge kind="prioridade" [value]="c.prioridade" [icone]="true" />
+                  @if (erro(c); as msg) {
+                    <p class="form-error" role="alert">{{ msg }}</p>
+                  }
+                </th>
+                <td>
+                  <label class="sr-only" [for]="'resp-' + c.prioridade">Primeira resposta, prioridade {{ c.prioridade }}, em minutos</label>
+                  <div class="minutes">
+                    <input
+                      [id]="'resp-' + c.prioridade"
+                      [name]="'resp-' + c.prioridade"
+                      type="number"
+                      min="1"
+                      [max]="max"
+                      step="1"
+                      class="form-control"
+                      [ngModel]="c.tempoRespostaMinutos"
+                      (ngModelChange)="alterar(c.prioridade, 'tempoRespostaMinutos', $event)"
+                    />
+                    <span class="minutes__unit">min</span>
+                  </div>
+                  <span class="form-hint">≈ {{ duracao(c.tempoRespostaMinutos) }}</span>
+                </td>
+                <td>
+                  <label class="sr-only" [for]="'resol-' + c.prioridade">Resolução, prioridade {{ c.prioridade }}, em minutos</label>
+                  <div class="minutes">
+                    <input
+                      [id]="'resol-' + c.prioridade"
+                      [name]="'resol-' + c.prioridade"
+                      type="number"
+                      min="1"
+                      [max]="max"
+                      step="1"
+                      class="form-control"
+                      [ngModel]="c.tempoResolucaoMinutos"
+                      (ngModelChange)="alterar(c.prioridade, 'tempoResolucaoMinutos', $event)"
+                    />
+                    <span class="minutes__unit">min</span>
+                  </div>
+                  <span class="form-hint">≈ {{ duracao(c.tempoResolucaoMinutos) }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card__footer sla-footer">
+        <span class="sla-footer__status" aria-live="polite">
+          @if (alteradas().length) {
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            {{ alteradas().length }} {{ alteradas().length === 1 ? 'prioridade alterada' : 'prioridades alteradas' }}
+          } @else {
+            Nenhuma alteração pendente
+          }
+        </span>
+        <button type="button" class="btn btn--secondary" (click)="descartar()" [disabled]="!alteradas().length || salvando()">
+          Descartar
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="!alteradas().length || invalidas().length > 0 || salvando()">
+          @if (salvando()) {
+            <span class="spinner" aria-hidden="true"></span> Salvando...
+          } @else {
+            Salvar alterações
+          }
+        </button>
+      </div>
+    </form>
+
+    <p class="alert">
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      O SLA de um chamado fica <strong>Em risco</strong> quando resta 20% ou menos do prazo de resolução e
+      <strong>Estourado</strong> quando o prazo passa sem que o chamado seja resolvido.
+    </p>
+  }
+</div>

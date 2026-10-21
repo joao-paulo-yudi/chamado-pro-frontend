@@ -1,0 +1,57 @@
+@if (carregando()) {
+  <div class="state"><span class="spinner" aria-hidden="true"></span><span class="sr-only">Carregando comentários</span></div>
+} @else if (comentarios().length === 0) {
+  <div class="state">
+    <i class="fa-regular fa-comments" aria-hidden="true"></i>
+    <p>Nenhuma mensagem ainda. Use o campo abaixo para tirar dúvidas ou enviar mais detalhes.</p>
+  </div>
+} @else {
+  <ol class="thread" aria-label="Mensagens">
+    @for (c of comentarios(); track c.id) {
+      <li class="msg" [class.msg--mine]="meu(c)">
+        <span class="avatar avatar--sm" aria-hidden="true">{{ c.autorNome | initials }}</span>
+        <div class="msg__bubble">
+          <div class="msg__head">
+            <strong>{{ meu(c) ? 'Você' : c.autorNome }}</strong>
+            <time [attr.datetime]="c.dataCriacao" [title]="c.dataCriacao | date: 'dd/MM/yyyy HH:mm'">
+              {{ c.dataCriacao | relativeTime }}
+            </time>
+            @if (podeExcluir(c)) {
+              <button
+                type="button"
+                class="msg__delete"
+                (click)="excluir(c)"
+                [attr.aria-label]="'Excluir comentário de ' + (c.autorNome || 'usuário')"
+                title="Excluir"
+              >
+                <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+              </button>
+            }
+          </div>
+          <p class="msg__text">{{ c.texto }}</p>
+        </div>
+      </li>
+    }
+  </ol>
+}
+
+<form class="composer" (ngSubmit)="enviar()">
+  <label [for]="'novo-comentario-' + chamadoId()" class="sr-only">Nova mensagem</label>
+  <textarea
+    [id]="'novo-comentario-' + chamadoId()"
+    name="novoComentario"
+    class="form-control"
+    rows="3"
+    maxlength="5000"
+    placeholder="Escreva uma mensagem..."
+    [(ngModel)]="novoComentario"
+    (keydown.enter)="atalhoEnviar($event)"
+    aria-describedby="composer-dica"
+  ></textarea>
+  <div class="composer__foot">
+    <span id="composer-dica" class="form-hint">Ctrl + Enter para enviar</span>
+    <button type="submit" class="btn btn--primary btn--sm" [disabled]="!novoComentario.trim() || enviando()">
+      <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Enviar
+    </button>
+  </div>
+</form>

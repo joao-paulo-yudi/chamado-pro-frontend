@@ -1,0 +1,53 @@
+<button
+  type="button"
+  class="btn btn--ghost btn--icon bell"
+  (click)="toggle()"
+  [attr.aria-label]="naoLidas() > 0 ? 'Notificações, ' + naoLidas() + ' não lidas' : 'Notificações'"
+  [attr.aria-expanded]="aberto()"
+  aria-controls="notif-painel"
+  title="Notificações"
+>
+  <i class="fa-regular fa-bell" aria-hidden="true"></i>
+  @if (naoLidas() > 0) {
+    <span class="bell__count" aria-hidden="true">{{ naoLidas() > 9 ? '9+' : naoLidas() }}</span>
+  }
+</button>
+
+@if (aberto()) {
+  <div id="notif-painel" class="panel" role="region" aria-label="Notificações">
+    <div class="panel__head">
+      <strong>Notificações</strong>
+      @if (naoLidas() > 0) {
+        <span class="badge badge--brand">{{ naoLidas() }} não {{ naoLidas() === 1 ? 'lida' : 'lidas' }}</span>
+      }
+    </div>
+
+    @if (carregando() && notificacoes().length === 0) {
+      <div class="panel__state"><span class="spinner" aria-hidden="true"></span><span class="sr-only">Carregando</span></div>
+    } @else if (notificacoes().length === 0) {
+      <div class="panel__state">
+        <i class="fa-regular fa-bell-slash" aria-hidden="true"></i>
+        <p>Você não tem notificações.</p>
+      </div>
+    } @else {
+      <ul class="panel__list">
+        @for (n of notificacoes(); track n.id) {
+          <li>
+            <button type="button" class="item" [class.item--unread]="!n.lida" (click)="abrir(n)">
+              <span class="item__dot" aria-hidden="true"></span>
+              <span class="item__body">
+                @if (!n.lida) {
+                  <span class="sr-only">Não lida: </span>
+                }
+                <span class="item__msg">{{ n.mensagem | humanizeEnums }}</span>
+                <span class="item__date" [title]="n.dataEnvio | date: 'dd/MM/yyyy HH:mm'">
+                  {{ n.dataEnvio | relativeTime }}
+                </span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+}

@@ -1,0 +1,197 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-header__title">{{ titulo() }}</h1>
+      <p class="page-header__subtitle">{{ subtitulo() }}</p>
+    </div>
+    <div class="page-header__actions">
+      <button type="button" class="btn btn--secondary" (click)="carregar()" [disabled]="carregando()">
+        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Atualizar
+      </button>
+    </div>
+  </header>
+
+  <section class="card" aria-labelledby="lista-titulo">
+    <h2 id="lista-titulo" class="sr-only">Lista de chamados</h2>
+
+    @if (visoes().length) {
+      <div class="tabs scope-tabs" role="group" aria-label="Visões">
+        @for (v of visoes(); track v.id) {
+          <button
+            type="button"
+            class="tab"
+            [attr.aria-pressed]="visao() === v.id"
+            (click)="selecionarVisao(v.id)"
+          >
+            <i class="fa-solid {{ v.icon }}" aria-hidden="true"></i>
+            {{ v.label }}
+            @if (contagemVisao()[v.id] !== null) {
+              <span class="tab__count">{{ contagemVisao()[v.id] }}</span>
+            }
+          </button>
+        }
+      </div>
+    }
+
+    <div class="toolbar">
+      <div class="toolbar__search input-icon">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <label for="filtro-busca" class="sr-only">Buscar</label>
+        <input
+          id="filtro-busca"
+          type="search"
+          class="form-control"
+          placeholder="Buscar por número, título, cliente..."
+          maxlength="200"
+          [ngModel]="busca()"
+          (ngModelChange)="busca.set($event); atualizarFiltro()"
+        />
+      </div>
+
+      <label for="filtro-prioridade" class="sr-only">Prioridade</label>
+      <select
+        id="filtro-prioridade"
+        class="form-control"
+        [ngModel]="prioridade()"
+        (ngModelChange)="prioridade.set($event); atualizarFiltro()"
+      >
+        <option value="">Todas as prioridades</option>
+        @for (p of prioridadeOpcoes; track p) {
+          <option [value]="p">{{ p | label: 'prioridade' }}</option>
+        }
+      </select>
+
+      <label for="filtro-ordem" class="sr-only">Ordenar por</label>
+      <select id="filtro-ordem" class="form-control" [ngModel]="ordem()" (ngModelChange)="ordem.set($event); atualizarFiltro()">
+        <option value="recentes">Mais recentes</option>
+        <option value="antigos">Mais antigos</option>
+        <option value="prioridade">Maior prioridade</option>
+        <option value="prazo">Prazo de resolução</option>
+      </select>
+
+      @if (filtrosAtivos()) {
+        <button type="button" class="btn btn--ghost btn--sm" (click)="limparFiltros()">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar filtros
+        </button>
+      }
+    </div>
+
+    <div class="status-filter" role="group" aria-label="Filtrar por status">
+      <button type="button" class="chip" [class.chip--on]="status() === ''" [attr.aria-pressed]="status() === ''" (click)="selecionarStatus('')">
+        Todos <span class="chip__count">{{ contagemStatus()[''] || 0 }}</span>
+      </button>
+      @for (s of statusOpcoes; track s) {
+        <button type="button" class="chip" [class.chip--on]="status() === s" [attr.aria-pressed]="status() === s" (click)="selecionarStatus(s)">
+          {{ statusLabel(s) }} <span class="chip__count">{{ contagemStatus()[s] || 0 }}</span>
+        </button>
+      }
+    </div>
+
+    @if (carregando()) {
+      <div class="skeleton-list" role="status" aria-label="Carregando chamados">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <div class="skeleton-row">
+            <span class="skeleton" style="width: 38%"></span>
+            <span class="skeleton" style="width: 12%"></span>
+            <span class="skeleton" style="width: 10%"></span>
+            <span class="skeleton" style="width: 16%"></span>
+          </div>
+        }
+      </div>
+    } @else if (erro()) {
+      <app-empty-state
+        icon="fa-plug-circle-exclamation"
+        titulo="Não foi possível carregar os chamados"
+        descricao="Verifique sua conexão e tente novamente."
+      >
+        <button type="button" class="btn btn--secondary" (click)="carregar()">Tentar novamente</button>
+      </app-empty-state>
+    } @else if (chamados().length === 0) {
+      @if (filtrosAtivos()) {
+        <app-empty-state
+          icon="fa-filter-circle-xmark"
+          titulo="Nenhum chamado encontrado"
+          descricao="Nenhum chamado corresponde aos filtros aplicados."
+        >
+          <button type="button" class="btn btn--secondary" (click)="limparFiltros()">Limpar filtros</button>
+        </app-empty-state>
+      } @else if (visao() === 'fila') {
+        <app-empty-state icon="fa-mug-hot" titulo="Fila vazia" descricao="Todos os chamados já têm um responsável." />
+      } @else if (visao() === 'sla') {
+        <app-empty-state icon="fa-circle-check" titulo="Tudo dentro do prazo" descricao="Nenhum chamado com SLA em risco ou estourado." />
+      } @else {
+        <app-empty-state
+          icon="fa-ticket"
+          titulo="Nenhum chamado por aqui"
+          [descricao]="auth.isTecnico() ? 'Assim que um chamado for atribuído a você, ele aparecerá aqui.' : 'Quando precisar de ajuda, abra um chamado e acompanhe o atendimento por esta tela.'"
+        >
+          @if (auth.isAdmin() || auth.isCliente()) {
+            <a routerLink="/chamados/novo" class="btn btn--primary">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Abrir chamado
+            </a>
+          }
+        </app-empty-state>
+      }
+    } @else {
+      <div class="table-wrap">
+        <table class="table table--hover tickets">
+          <caption class="sr-only">Chamados ({{ chamados().length }})</caption>
+          <thead>
+            <tr>
+              <th scope="col">Chamado</th>
+              <th scope="col">Status</th>
+              <th scope="col">Prioridade</th>
+              <th scope="col">SLA</th>
+              <th scope="col">{{ auth.isCliente() ? 'Responsável' : 'Cliente / Responsável' }}</th>
+              <th scope="col">Aberto</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of chamados(); track c.id) {
+              <tr (click)="abrir(c, $event)">
+                <td class="tickets__main">
+                  <a [routerLink]="['/chamados', c.id]" class="tickets__title">
+                    <span class="tickets__id">#{{ c.id }}</span>
+                    {{ c.titulo }}
+                  </a>
+                  <span class="tickets__desc">
+                    @if (c.categoria) {
+                      <i class="fa-solid {{ categoriaMeta[c.categoria].icon }}" aria-hidden="true"></i>
+                      {{ c.categoria | label: 'categoria' }} ·
+                    }
+                    <span class="truncate">{{ c.descricao }}</span>
+                  </span>
+                </td>
+                <td data-label="Status"><app-enum-badge kind="status" [value]="c.status" /></td>
+                <td data-label="Prioridade">
+                  <app-enum-badge kind="prioridade" [value]="c.prioridade" [icone]="true" vazio="—" />
+                </td>
+                <td data-label="SLA"><app-enum-badge kind="sla" [value]="c.statusSla" [icone]="true" vazio="—" /></td>
+                <td data-label="Pessoas">
+                  <div class="people">
+                    @if (!auth.isCliente()) {
+                      <span class="people__line" title="Cliente">
+                        <i class="fa-regular fa-user" aria-hidden="true"></i>
+                        <span class="sr-only">Cliente:</span> {{ c.clienteNome || '—' }}
+                      </span>
+                    }
+                    <span class="people__line" [class.people__none]="!c.tecnicoNome" title="Responsável">
+                      <i class="fa-solid fa-headset" aria-hidden="true"></i>
+                      <span class="sr-only">Responsável:</span> {{ c.tecnicoNome || 'Não atribuído' }}
+                    </span>
+                  </div>
+                </td>
+                <td data-label="Aberto" class="tickets__date">
+                  <span [title]="c.dataCriacao | date: 'dd/MM/yyyy HH:mm'">{{ c.dataCriacao | relativeTime }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="list-footer">
+        Mostrando {{ chamados().length }} {{ chamados().length === 1 ? 'chamado' : 'chamados' }}
+      </p>
+    }
+  </section>
+</div>

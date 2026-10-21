@@ -1,0 +1,187 @@
+<div class="page page--narrow">
+  <header class="page-header">
+    <div>
+      <a routerLink="/usuarios" class="back-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Usuários</a>
+      <h1 class="page-header__title">{{ edicao() ? 'Editar usuário' : 'Novo usuário' }}</h1>
+      <p class="page-header__subtitle">
+        {{ edicao() ? 'Atualize os dados de acesso e de contato.' : 'Cadastre um cliente, técnico ou administrador.' }}
+      </p>
+    </div>
+  </header>
+
+  @if (carregando()) {
+    <app-loading-state mensagem="Carregando usuário..." />
+  } @else {
+    <form class="stack-lg" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <!-- Dados pessoais -->
+      <section class="card" aria-labelledby="sec-dados">
+        <div class="card__header">
+          <div>
+            <h2 id="sec-dados" class="card__title">Dados pessoais</h2>
+            <p class="card__subtitle">Nome e e-mail usados para login e notificações.</p>
+          </div>
+        </div>
+        <div class="card__body form-grid">
+          <div class="form-field">
+            <label for="u-nome" class="form-label">Nome <span class="req" aria-hidden="true">*</span></label>
+            <input id="u-nome" class="form-control" formControlName="nome" maxlength="120" autocomplete="off"
+                   aria-required="true" [attr.aria-invalid]="invalido('nome')" aria-describedby="u-nome-erro" />
+            <span id="u-nome-erro" class="form-error">
+              @if (invalido('nome')) { Informe o nome. }
+            </span>
+          </div>
+          <div class="form-field">
+            <label for="u-email" class="form-label">E-mail <span class="req" aria-hidden="true">*</span></label>
+            <input id="u-email" type="email" class="form-control" formControlName="email" maxlength="254" autocomplete="off"
+                   aria-required="true" [attr.aria-invalid]="invalido('email')" aria-describedby="u-email-erro" />
+            <span id="u-email-erro" class="form-error">
+              @if (invalido('email')) { Informe um e-mail válido. }
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Perfil de acesso -->
+      <section class="card" aria-labelledby="sec-perfil">
+        <div class="card__header">
+          <div>
+            <h2 id="sec-perfil" class="card__title">Perfil de acesso</h2>
+            <p class="card__subtitle">Define o que o usuário pode ver e fazer.</p>
+          </div>
+        </div>
+        <div class="card__body stack">
+          <fieldset class="fieldset">
+            <legend class="sr-only">Perfil</legend>
+            <div class="roles">
+              @for (r of roles; track r) {
+                <label class="role">
+                  <input type="radio" formControlName="tipoUsuario" [value]="r" name="tipoUsuario" />
+                  <span class="role__box">
+                    <i class="fa-solid {{ roleMeta[r].icon }}" aria-hidden="true"></i>
+                    <strong>{{ roleMeta[r].label }}</strong>
+                    <small>
+                      @switch (r) {
+                        @case ('CLIENTE') { Abre e acompanha os próprios chamados. }
+                        @case ('TECNICO') { Atende chamados da fila e escalona. }
+                        @case ('ADMIN') { Acesso total, usuários e SLA. }
+                      }
+                    </small>
+                  </span>
+                </label>
+              }
+            </div>
+          </fieldset>
+
+          @if (tipo() === 'TECNICO') {
+            <fieldset class="fieldset form-field">
+              <legend class="form-label">Nível de atendimento</legend>
+              <div class="segmented">
+                @for (n of niveis; track n) {
+                  <label>
+                    <input type="radio" formControlName="nivelTecnico" [value]="n" name="nivelTecnico" />
+                    <span>{{ n }}</span>
+                  </label>
+                }
+              </div>
+              <span class="form-hint">N1 atende primeiro; chamados complexos são escalonados para N2 e N3.</span>
+            </fieldset>
+          }
+        </div>
+      </section>
+
+      <!-- Senha -->
+      <section class="card" aria-labelledby="sec-senha">
+        <div class="card__header">
+          <div>
+            <h2 id="sec-senha" class="card__title">{{ edicao() ? 'Redefinir senha' : 'Senha inicial' }}</h2>
+            <p class="card__subtitle">
+              {{ edicao() ? 'Deixe em branco para manter a senha atual.' : 'Oriente o usuário a trocá-la no primeiro acesso.' }}
+            </p>
+          </div>
+        </div>
+        <div class="card__body">
+          <div class="form-field">
+            <label for="u-senha" class="form-label">
+              {{ edicao() ? 'Nova senha' : 'Senha' }}
+              @if (!edicao()) { <span class="req" aria-hidden="true">*</span> }
+            </label>
+            <div class="input-icon">
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              <input id="u-senha" class="form-control" formControlName="senha" maxlength="128" autocomplete="new-password"
+                     [type]="mostrarSenha() ? 'text' : 'password'" [attr.aria-required]="!edicao()"
+                     [attr.aria-invalid]="invalido('senha')" aria-describedby="u-senha-dica" />
+              <button type="button" class="input-icon__action" (click)="mostrarSenha.set(!mostrarSenha())"
+                      [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'" [attr.aria-pressed]="mostrarSenha()">
+                <i class="fa-regular" [class.fa-eye]="!mostrarSenha()" [class.fa-eye-slash]="mostrarSenha()" aria-hidden="true"></i>
+              </button>
+            </div>
+            <span id="u-senha-dica" [class]="invalido('senha') ? 'form-error' : 'form-hint'">Mínimo de 8 caracteres.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- WhatsApp -->
+      <section class="card" aria-labelledby="sec-whatsapp">
+        <div class="card__header">
+          <div>
+            <h2 id="sec-whatsapp" class="card__title">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Notificações por WhatsApp <span class="opt">(opcional)</span>
+            </h2>
+            <p class="card__subtitle">
+              As mensagens só são enviadas depois que o próprio usuário der consentimento. Preencha apenas se ele pediu.
+            </p>
+          </div>
+        </div>
+        <div class="card__body stack">
+          @if (original(); as o) {
+            <p class="alert" [class.alert--success]="o.consentimentoWhatsapp">
+              <i class="fa-solid" [class.fa-circle-check]="o.consentimentoWhatsapp" [class.fa-circle-info]="!o.consentimentoWhatsapp" aria-hidden="true"></i>
+              Consentimento do usuário: <strong>{{ o.consentimentoWhatsapp ? 'concedido' : 'não concedido' }}</strong>.
+              Só o próprio usuário pode alterá-lo.
+            </p>
+          }
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="u-telefone" class="form-label">Telefone</label>
+              <input id="u-telefone" class="form-control" formControlName="telefone" inputmode="numeric" maxlength="15"
+                     placeholder="5511999999999" autocomplete="off" [attr.aria-invalid]="invalido('telefone')"
+                     aria-describedby="u-telefone-dica" />
+              <span id="u-telefone-dica" [class]="invalido('telefone') ? 'form-error' : 'form-hint'">
+                Formato internacional, só dígitos (10 a 15).
+              </span>
+              @if (telefoneAlterado()) {
+                <span class="form-error"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Trocar o telefone revoga o consentimento atual.</span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="u-apikey" class="form-label">API Key do CallMeBot</label>
+              <input id="u-apikey" type="password" class="form-control" formControlName="whatsappApiKey" maxlength="64"
+                     autocomplete="off" [placeholder]="edicao() ? 'Deixe em branco para manter' : ''" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      @if (erro()) {
+        <p class="alert alert--danger" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> {{ erro() }}</p>
+      }
+
+      <div class="form-bar">
+        @if (edicao()) {
+          <button type="button" class="btn btn--danger-outline" (click)="excluir()">
+            <i class="fa-regular fa-trash-can" aria-hidden="true"></i> Excluir usuário
+          </button>
+        }
+        <span class="form-bar__spacer"></span>
+        <a routerLink="/usuarios" class="btn btn--secondary">Cancelar</a>
+        <button type="submit" class="btn btn--primary" [disabled]="salvando()">
+          @if (salvando()) {
+            <span class="spinner" aria-hidden="true"></span> Salvando...
+          } @else {
+            {{ edicao() ? 'Salvar alterações' : 'Criar usuário' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

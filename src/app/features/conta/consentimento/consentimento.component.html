@@ -1,0 +1,67 @@
+<div class="consent">
+  <main id="conteudo" class="consent__card card" tabindex="-1">
+    <img src="assets/logo-vertical.svg" alt="ChamadoPro" class="consent__logo" />
+
+    <h1 class="consent__title">
+      @if (perfil()?.nome; as nome) { Olá, {{ nome.split(' ')[0] }}! } @else { Antes de continuar }
+    </h1>
+    <p class="consent__intro">
+      @if (perfil()?.versaoTermosAceita) {
+        Nossos Termos de Uso e/ou nossa Política de Privacidade foram atualizados.
+      } @else {
+        Este é seu primeiro acesso.
+      }
+      Leia os documentos e confirme suas escolhas para continuar.
+    </p>
+
+    <form (ngSubmit)="confirmar()" novalidate class="consent__form">
+      <fieldset class="choice" [class.choice--on]="aceiteTermos">
+        <legend class="choice__legend"><span class="badge badge--danger">Obrigatório</span></legend>
+        <label class="checkbox" for="aceiteTermos">
+          <input id="aceiteTermos" type="checkbox" name="aceiteTermos" [(ngModel)]="aceiteTermos" aria-describedby="erro-consentimento" />
+          <span>
+            Li e aceito os <a routerLink="/termos" target="_blank" rel="noopener">Termos de Uso</a>
+            e a <a routerLink="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a>.
+          </span>
+        </label>
+      </fieldset>
+
+      <fieldset class="choice" [class.choice--on]="consentimentoWhatsapp">
+        <legend class="choice__legend"><span class="badge badge--neutral">Opcional</span></legend>
+        <label class="checkbox" for="consentimentoWhatsapp">
+          <input id="consentimentoWhatsapp" type="checkbox" name="consentimentoWhatsapp" [(ngModel)]="consentimentoWhatsapp" />
+          <span>
+            Quero receber avisos de atualização dos meus chamados por <strong>WhatsApp</strong>.
+            <small class="choice__detail">
+              O envio é feito pelo serviço de terceiro CallMeBot, que recebe meu telefone e uma mensagem genérica com o
+              número do chamado. Posso desativar quando quiser em "Meus dados".
+            </small>
+          </span>
+        </label>
+        @if (perfil() && !perfil()!.whatsappConfigurado) {
+          <p class="form-hint choice__hint">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            Seu telefone/chave do WhatsApp ainda não foi cadastrado pelo administrador; a opção só terá efeito depois disso.
+          </p>
+        }
+      </fieldset>
+
+      <p id="erro-consentimento" class="form-error" role="alert">
+        @if (erro()) {
+          <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> {{ erro() }}
+        }
+      </p>
+
+      <div class="consent__actions">
+        <button type="button" class="btn btn--ghost" (click)="sair()">Sair</button>
+        <button type="submit" class="btn btn--primary btn--lg" [disabled]="enviando()">
+          @if (enviando()) {
+            <span class="spinner" aria-hidden="true"></span> Confirmando...
+          } @else {
+            Confirmar e continuar
+          }
+        </button>
+      </div>
+    </form>
+  </main>
+</div>

@@ -1,0 +1,106 @@
+/* ==========================================================================
+   Design tokens do ChamadoPro
+   Cores da marca extraídas dos logos (azul-marinho #000842 e azul #3d42dc).
+   ========================================================================== */
+
+:root {
+  /* Marca */
+  --brand-900: #000842;
+  --brand-800: #010a53;
+  --brand-700: #1e3a8a;
+  --accent: #3d42dc;
+  --accent-hover: #2f34b8;
+  --accent-bright: #0a27e6;
+  --accent-soft: #eef0fd;
+  --accent-soft-2: #dfe2fb;
+
+  /* Aliases semânticos (mantidos por compatibilidade) */
+  --primary: var(--brand-900);
+  --primary-hover: var(--brand-700);
+
+  /* Superfícies */
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --card: var(--surface);
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Texto (#4b5563: contraste 7.5:1 no branco e 6.9:1 no fundo — WCAG AA exige 4.5:1) */
+  --text: #0f172a;
+  --text-2: #1e293b;
+  --muted: #4b5563;
+  --subtle: #64748b;
+  --on-brand: #ffffff;
+  --on-brand-muted: rgba(255, 255, 255, 0.72);
+
+  /* Estados — tons de fundo/borda/texto para badges e alertas */
+  --success: #15803d;
+  --success-bg: #ecfdf3;
+  --success-border: #bbf7d0;
+  --warning: #b45309;
+  --warning-bg: #fff7ed;
+  --warning-border: #fed7aa;
+  --danger: #dc2626;
+  --danger-strong: #b91c1c;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --info: #3730a3;
+  --info-bg: #eef2ff;
+  --info-border: #c7d2fe;
+  --cyan: #0e7490;
+  --cyan-bg: #ecfeff;
+  --cyan-border: #a5f3fc;
+  --neutral: #475569;
+  --neutral-bg: #f1f5f9;
+  --neutral-border: #e2e8f0;
+
+  /* Paleta de status para gráficos (sempre acompanhada de ícone + rótulo) */
+  --chart-series: var(--accent);
+  --chart-track: #eef0f5;
+  --chart-good: #0ca30c;
+  --chart-warning: #fab219;
+  --chart-critical: #d03b3b;
+
+  /* Tipografia (a CSP só permite fontes locais: usa a fonte do sistema) */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+
+  /* Espaçamento */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Raios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.14);
+  --focus-ring: 0 0 0 3px rgba(61, 66, 220, 0.28);
+
+  /* Layout */
+  --sidebar-width: 248px;
+  --topbar-height: 64px;
+  --content-max: 1280px;
+
+  --transition: 150ms ease;
+}

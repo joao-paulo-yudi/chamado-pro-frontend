@@ -1,17 +1,5 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter, Router, withHashLocation } from '@angular/router';
-import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { importProvidersFrom } from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppComponent } from './app/app.component';
-import { routes } from './app/app.routes';
-import { AuthInterceptor } from './app/core/services/auth.interceptor';
+import { appConfig } from './app/app.config';
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideRouter(routes, withHashLocation()),
-    provideHttpClient(withInterceptorsFromDi()),
-    importProvidersFrom(FormsModule, ReactiveFormsModule),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-  ]
-});
+bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err));

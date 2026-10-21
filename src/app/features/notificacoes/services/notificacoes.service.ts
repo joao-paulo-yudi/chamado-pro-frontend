@@ -1,23 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-
-export interface Notificacao {
-  id: number;
-  chamadoId?: number;
-  chamadoTitulo?: string;
-  mensagem: string;
-  canal: string;
-  status: string;
-  lida: boolean;
-  dataEnvio: string;
-}
+import { ApiService } from '@core/services/api.service';
+import { Notificacao } from '@core/models';
 
 @Injectable({ providedIn: 'root' })
 export class NotificacoesService {
+  private readonly api = inject(ApiService);
   private readonly apiUrl = '/notificacoes';
-
-  constructor(private api: ApiService) {}
 
   listar(): Observable<Notificacao[]> {
     return this.api.get<Notificacao[]>(this.apiUrl);

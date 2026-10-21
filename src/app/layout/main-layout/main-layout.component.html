@@ -1,0 +1,19 @@
+<a class="skip-link" href="#conteudo" (click)="pularParaConteudo($event)">Pular para o conteúdo</a>
+
+<div class="shell">
+  <app-sidebar [aberto]="menuAberto()" (fechar)="menuAberto.set(false)" />
+
+  @if (menuAberto()) {
+    <div class="shell__backdrop" (click)="menuAberto.set(false)" aria-hidden="true"></div>
+  }
+
+  <div class="shell__main">
+    <app-topbar (abrirMenu)="menuAberto.set(true)" />
+
+    <main id="conteudo" class="shell__content" tabindex="-1">
+      <router-outlet />
+    </main>
+
+    <app-site-footer />
+  </div>
+</div>
