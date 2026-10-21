@@ -8,6 +8,45 @@ export const routes: Routes = [
       import('./features/auth/components/login/login.component')
         .then(m => m.LoginComponent),
   },
+  // Páginas públicas (acessíveis sem login)
+  {
+    path: 'privacidade',
+    loadComponent: () =>
+      import('./features/legal/privacidade/privacidade.component').then(m => m.PoliticaPrivacidadeComponent),
+  },
+  {
+    path: 'termos',
+    loadComponent: () =>
+      import('./features/legal/termos/termos.component').then(m => m.TermosUsoComponent),
+  },
+  {
+    path: 'cookies',
+    loadComponent: () =>
+      import('./features/legal/cookies/cookies.component').then(m => m.PoliticaCookiesComponent),
+  },
+  {
+    path: 'reembolso',
+    loadComponent: () =>
+      import('./features/legal/reembolso/reembolso.component').then(m => m.PoliticaReembolsoComponent),
+  },
+  {
+    path: 'licencas',
+    loadComponent: () =>
+      import('./features/legal/licencas/licencas.component').then(m => m.LicencasComponent),
+  },
+  {
+    path: 'consentimento',
+    canActivate: [authGuard],
+    data: { skipConsent: true },
+    loadComponent: () =>
+      import('./features/legal/consentimento/consentimento.component').then(m => m.ConsentimentoComponent),
+  },
+  {
+    path: 'meus-dados',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/legal/meus-dados/meus-dados.component').then(m => m.MeusDadosComponent),
+  },
   {
     path: '',
     canActivate: [authGuard],

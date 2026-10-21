@@ -1,23 +1,23 @@
 <div class="modal" *ngIf="usuario">
-    <h3>Editar Usuário</h3>
-  
-    <form (ngSubmit)="salvar()">
-      <label>Nome</label>
-      <input [(ngModel)]="usuario.nome" name="nome" required />
-  
-      <label>Email</label>
-      <input [(ngModel)]="usuario.email" name="email" required type="email" />
+    <h1>Editar Usuário</h1>
 
-      <label>Tipo</label>
-      <select [(ngModel)]="usuario.tipoUsuario" name="tipoUsuario">
+    <form (ngSubmit)="salvar()" #f="ngForm">
+      <label for="eu-nome">Nome</label>
+      <input id="eu-nome" [(ngModel)]="usuario.nome" name="nome" required maxlength="120" />
+
+      <label for="eu-email">E-mail</label>
+      <input id="eu-email" [(ngModel)]="usuario.email" name="email" required type="email" maxlength="254" />
+
+      <label for="eu-tipo">Tipo</label>
+      <select id="eu-tipo" [(ngModel)]="usuario.tipoUsuario" name="tipoUsuario">
         <option value="CLIENTE">CLIENTE</option>
         <option value="TECNICO">TECNICO</option>
         <option value="ADMIN">ADMIN</option>
       </select>
 
       <ng-container *ngIf="usuario.tipoUsuario === 'TECNICO'">
-        <label>Nível de Atendimento</label>
-        <select [(ngModel)]="usuario.nivelTecnico" name="nivelTecnico">
+        <label for="eu-nivel">Nível de Atendimento</label>
+        <select id="eu-nivel" [(ngModel)]="usuario.nivelTecnico" name="nivelTecnico">
           <option [ngValue]="null" disabled>Selecione...</option>
           <option value="N1">N1</option>
           <option value="N2">N2</option>
@@ -25,19 +25,30 @@
         </select>
       </ng-container>
 
-      <label>Telefone (WhatsApp, formato internacional)</label>
-      <input [(ngModel)]="usuario.telefone" name="telefone" placeholder="Ex: 5511999999999" />
+      <fieldset class="whatsapp-box">
+        <legend>WhatsApp (opcional)</legend>
+        <p class="hint">
+          Consentimento do usuário: <strong>{{ usuario.consentimentoWhatsapp ? 'concedido' : 'não concedido' }}</strong>.
+          Só o próprio usuário pode alterá-lo. Trocar o telefone revoga o consentimento.
+        </p>
+        <label for="eu-telefone">Telefone (formato internacional, só dígitos)</label>
+        <input id="eu-telefone" [(ngModel)]="usuario.telefone" name="telefone" placeholder="Ex: 5511999999999"
+               inputmode="numeric" pattern="\d{10,15}" maxlength="15" />
 
-      <label>WhatsApp API Key (CallMeBot)</label>
-      <input [(ngModel)]="usuario.whatsappApiKey" name="whatsappApiKey"
-             placeholder="Deixe em branco para manter a atual" />
+        <label for="eu-apikey">API Key do CallMeBot</label>
+        <input id="eu-apikey" [(ngModel)]="usuario.whatsappApiKey" name="whatsappApiKey" type="password" maxlength="64"
+               autocomplete="off" placeholder="Deixe em branco para manter a atual" />
+      </fieldset>
 
-      <label>Nova senha (opcional)</label>
-      <input [(ngModel)]="usuario.senha" name="senha" type="password" placeholder="Deixe em branco para manter a atual" />
+      <label for="eu-senha">Nova senha (opcional)</label>
+      <input id="eu-senha" [(ngModel)]="usuario.senha" name="senha" type="password" minlength="8" maxlength="128"
+             autocomplete="new-password" placeholder="Deixe em branco para manter a atual" />
+
+      <p class="erro" role="alert" *ngIf="erro">{{ erro }}</p>
 
       <div class="actions">
-        <button type="button" class="btn-delete" (click)="deletar()">Deletar</button>
-        <button type="submit" class="btn">Salvar</button>
+        <button type="button" class="btn-delete" (click)="deletar()">Excluir usuário</button>
+        <button type="submit" class="btn" [disabled]="f.invalid">Salvar</button>
       </div>
     </form>
   </div>

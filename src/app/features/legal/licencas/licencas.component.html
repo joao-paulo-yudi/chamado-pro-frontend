@@ -1,0 +1,44 @@
+<app-legal-shell titulo="Licenças e créditos">
+  <p>O {{ info.nomeFantasia }} usa os componentes de terceiros abaixo, conforme suas licenças.</p>
+
+  <h2>Fontes e ícones</h2>
+  <table class="legal-table">
+    <caption>Fontes e ícones</caption>
+    <thead><tr><th scope="col">Recurso</th><th scope="col">Licença</th><th scope="col">Uso</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Font Awesome Free 6.4.2 — Fonticons, Inc.</td>
+        <td>Ícones: CC BY 4.0 · Fontes: SIL OFL 1.1 · Código: MIT</td>
+        <td>Ícones da interface, servidos localmente com o aviso de licença preservado no CSS</td>
+      </tr>
+      <tr>
+        <td>Fontes do sistema (system-ui, Arial)</td>
+        <td>Licenciadas com o sistema operacional do usuário</td>
+        <td>Texto da interface. Nenhuma fonte web é baixada de terceiros</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Imagens</h2>
+  <p>
+    O logotipo e as demais imagens em <code>assets/</code> são de propriedade de
+    {{ info.razaoSocial }}. Não é permitido reproduzi-los sem autorização.
+  </p>
+
+  <h2>Bibliotecas</h2>
+  <table class="legal-table">
+    <caption>Bibliotecas de código aberto</caption>
+    <thead><tr><th scope="col">Biblioteca</th><th scope="col">Licença</th></tr></thead>
+    <tbody>
+      <tr><td>Angular</td><td>MIT</td></tr>
+      <tr><td>RxJS</td><td>Apache 2.0</td></tr>
+      <tr><td>zone.js</td><td>MIT</td></tr>
+      <tr><td>tslib</td><td>0BSD</td></tr>
+      <tr><td>jwt-decode</td><td>MIT</td></tr>
+    </tbody>
+  </table>
+  <p>
+    O texto completo das licenças das bibliotecas incluídas no aplicativo está em
+    <a href="3rdpartylicenses.txt" target="_blank" rel="noopener noreferrer">3rdpartylicenses.txt</a>.
+  </p>
+</app-legal-shell>

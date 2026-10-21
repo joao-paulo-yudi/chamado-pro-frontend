@@ -24,7 +24,7 @@ export class ListaChamadosComponent implements OnInit {
     this.chamados.listar().subscribe(data => this.tickets = data);
   }
 
-  open(id: string) { this.router.navigate(['/detalhe', id]); }
+  open(id: number) { this.router.navigate(['/detalhe', id]); }
   novo() { this.router.navigate(['/novo']); }
 
   statusClass(s: string) {

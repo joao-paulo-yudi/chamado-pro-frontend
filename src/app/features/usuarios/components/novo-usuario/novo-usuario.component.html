@@ -1,24 +1,27 @@
 <div class="modal">
-    <form (ngSubmit)="criar()">
-      <label>Nome</label>
-      <input [(ngModel)]="nome" name="nome" required />
-  
-      <label>Email</label>
-      <input [(ngModel)]="email" name="email" required type="email" />
+    <h1 class="sr-only">Novo usuário</h1>
+    <form (ngSubmit)="criar()" #f="ngForm">
+      <label for="nu-nome">Nome</label>
+      <input id="nu-nome" [(ngModel)]="nome" name="nome" required maxlength="120" autocomplete="off" />
 
-      <label>Senha</label>
-      <input [(ngModel)]="senha" name="senha" required type="senha" />
-  
-      <label>Tipo</label>
-      <select [(ngModel)]="tipoUsuario" name="tipoUsuario">
+      <label for="nu-email">E-mail</label>
+      <input id="nu-email" [(ngModel)]="email" name="email" required type="email" maxlength="254" autocomplete="off" />
+
+      <label for="nu-senha">Senha inicial</label>
+      <input id="nu-senha" [(ngModel)]="senha" name="senha" required type="password" minlength="8" maxlength="128"
+             autocomplete="new-password" aria-describedby="nu-senha-dica" />
+      <small id="nu-senha-dica" class="hint">Mínimo de 8 caracteres. Oriente o usuário a trocá-la no primeiro acesso.</small>
+
+      <label for="nu-tipo">Tipo</label>
+      <select id="nu-tipo" [(ngModel)]="tipoUsuario" name="tipoUsuario">
         <option>CLIENTE</option>
         <option>TECNICO</option>
         <option>ADMIN</option>
       </select>
 
       <ng-container *ngIf="tipoUsuario === 'TECNICO'">
-        <label>Nível de Atendimento</label>
-        <select [(ngModel)]="nivelTecnico" name="nivelTecnico">
+        <label for="nu-nivel">Nível de Atendimento</label>
+        <select id="nu-nivel" [(ngModel)]="nivelTecnico" name="nivelTecnico">
           <option [ngValue]="null" disabled>Selecione...</option>
           <option value="N1">N1</option>
           <option value="N2">N2</option>
@@ -26,14 +29,25 @@
         </select>
       </ng-container>
 
-      <label>Telefone (WhatsApp, formato internacional)</label>
-      <input [(ngModel)]="telefone" name="telefone" placeholder="Ex: 5511999999999" />
+      <fieldset class="whatsapp-box">
+        <legend>WhatsApp (opcional)</legend>
+        <p class="hint">
+          As mensagens só serão enviadas depois que o próprio usuário der consentimento na tela
+          de primeiro acesso ou em "Meus dados". Preencha apenas se o usuário pediu.
+        </p>
+        <label for="nu-telefone">Telefone (formato internacional, só dígitos)</label>
+        <input id="nu-telefone" [(ngModel)]="telefone" name="telefone" placeholder="Ex: 5511999999999"
+               inputmode="numeric" pattern="\d{10,15}" maxlength="15" autocomplete="off" />
 
-      <label>WhatsApp API Key (CallMeBot)</label>
-      <input [(ngModel)]="whatsappApiKey" name="whatsappApiKey" placeholder="Opcional - para notificações por WhatsApp" />
+        <label for="nu-apikey">API Key do CallMeBot</label>
+        <input id="nu-apikey" [(ngModel)]="whatsappApiKey" name="whatsappApiKey" type="password" maxlength="64"
+               autocomplete="off" />
+      </fieldset>
 
-      <button type="submit" class="btn">Criar</button>
-  
-      <p *ngIf="sucesso" class="msg-sucesso">Usuário criado com sucesso!</p>
+      <p class="erro" role="alert" *ngIf="erro">{{ erro }}</p>
+
+      <button type="submit" class="btn" [disabled]="f.invalid">Criar</button>
+
+      <p *ngIf="sucesso" class="msg-sucesso" role="status">Usuário criado com sucesso!</p>
     </form>
   </div>

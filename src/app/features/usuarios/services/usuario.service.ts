@@ -11,7 +11,14 @@ export interface Usuario {
   nivelTecnico?: string | null;
   telefone?: string | null;
   whatsappApiKey?: string | null;
-  dataCriacao?: string;
+  consentimentoWhatsapp?: boolean;
+}
+
+/** Dados mínimos de um técnico (GET /usuarios/tecnicos). */
+export interface TecnicoResumo {
+  id: number;
+  nome: string;
+  nivelTecnico?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,8 +35,8 @@ export class UsuariosService {
    * Lista apenas os usuários técnicos (com seus níveis N1/N2/N3),
    * usado para popular seletores de escalonamento.
    */
-  listarTecnicos(): Observable<Usuario[]> {
-    return this.api.get<Usuario[]>(`${this.apiUrl}/tecnicos`);
+  listarTecnicos(): Observable<TecnicoResumo[]> {
+    return this.api.get<TecnicoResumo[]>(`${this.apiUrl}/tecnicos`);
   }
 
   buscarPorId(id: number): Observable<Usuario> {

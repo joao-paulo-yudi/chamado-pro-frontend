@@ -2,53 +2,70 @@
   <div class="login-left">
     <img src="assets/logo-vertical.svg" alt="ChamadoPro" class="logo" />
 
-    <div class="login-content">
-      <h2>Entrar</h2>
+    <main id="conteudo" class="login-content" tabindex="-1">
+      <h1>Entrar</h1>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form" novalidate>
         <label for="email">E-mail</label>
         <div class="input-group">
-          <i class="fa fa-envelope"></i>
-          <input id="email" type="email" formControlName="email" placeholder="Digite seu e-mail" />
+          <i class="fa fa-envelope" aria-hidden="true"></i>
+          <input id="email" type="email" formControlName="email" placeholder="Digite seu e-mail"
+                 autocomplete="username" maxlength="254" aria-required="true"
+                 [attr.aria-invalid]="form.get('email')?.touched && form.get('email')?.invalid"
+                 aria-describedby="email-erro" />
         </div>
-        <p class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('required')">
-          Campo email obrigatório
-        </p>
-        <p class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
-          Email inválido
-        </p>
+        <div id="email-erro">
+          <p class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('required')">
+            Campo e-mail obrigatório
+          </p>
+          <p class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+            E-mail inválido
+          </p>
+        </div>
 
         <label for="senha">Senha</label>
         <div class="input-group password">
-          <i class="fa fa-lock"></i>
+          <i class="fa fa-lock" aria-hidden="true"></i>
           <input id="senha" [type]="showPassword ? 'text' : 'password'" formControlName="senha"
-            placeholder="Digite sua senha" />
-          <button type="button" class="show-password" (click)="togglePassword()" tabindex="-1">
-            <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            placeholder="Digite sua senha" autocomplete="current-password" maxlength="128" aria-required="true"
+            [attr.aria-invalid]="form.get('senha')?.touched && form.get('senha')?.invalid"
+            aria-describedby="senha-erro" />
+          <button type="button" class="show-password" (click)="togglePassword()"
+                  [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+                  [attr.aria-pressed]="showPassword">
+            <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
           </button>
         </div>
 
-        <p class="error" *ngIf="form.get('senha')?.touched && form.get('senha')?.hasError('required')">
-          Campo senha obrigatório
-        </p>
+        <div id="senha-erro">
+          <p class="error" *ngIf="form.get('senha')?.touched && form.get('senha')?.hasError('required')">
+            Campo senha obrigatório
+          </p>
+        </div>
 
-        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
 
         <button type="submit" class="btn" [disabled]="loading">
           Entrar
         </button>
       </form>
 
-    </div>
+      <p class="login-legal">
+        Ao entrar, você concorda com os <a routerLink="/termos">Termos de Uso</a> e declara ter lido a
+        <a routerLink="/privacidade">Política de Privacidade</a> e a <a routerLink="/cookies">Política de Cookies</a>.
+      </p>
+    </main>
   </div>
 
   <div class="login-right">
     <div class="brand-box">
-      <img src="assets/logo.svg" alt="Logo ChamadoPro" />
+      <!-- Decorativa: o logo já é anunciado no topo da página -->
+      <img src="assets/logo.svg" alt="" />
     </div>
   </div>
 </div>
 
-<div class="loading-overlay" *ngIf="loading">
-  <div class="spinner"></div>
+<div class="loading-overlay" *ngIf="loading" role="status" aria-live="polite">
+  <div class="spinner" aria-hidden="true"></div>
+  <span class="sr-only">Entrando...</span>
 </div>

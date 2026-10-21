@@ -20,6 +20,7 @@ export class NovoUsuarioComponent {
   telefone = '';
   whatsappApiKey = '';
   sucesso = false;
+  erro = '';
 
   constructor(private usuariosService: UsuariosService, private router: Router) {}
 
@@ -32,9 +33,13 @@ export class NovoUsuarioComponent {
       nivelTecnico: this.tipoUsuario === 'TECNICO' ? this.nivelTecnico : null,
       telefone: this.telefone || null,
       whatsappApiKey: this.whatsappApiKey || null
-    }).subscribe(() => {
-      this.sucesso = true;
-      setTimeout(() => this.router.navigate(['/usuarios']), 1000);
+    }).subscribe({
+      next: () => {
+        this.erro = '';
+        this.sucesso = true;
+        setTimeout(() => this.router.navigate(['/usuarios']), 1000);
+      },
+      error: err => this.erro = err.error?.message || 'Não foi possível criar o usuário.'
     });
   }
 }

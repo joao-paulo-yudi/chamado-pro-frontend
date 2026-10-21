@@ -8,8 +8,8 @@
       <div class="list-header">
         <h2>{{ chamado.titulo }}</h2>
         <div>
-          <button class="btn" (click)="editar()">Editar</button>
-          <button class="btn btn-danger" (click)="excluir()">Excluir</button>
+          <button type="button" class="btn" *ngIf="podeEditar()" (click)="editar()">Editar</button>
+          <button type="button" class="btn btn-danger" *ngIf="podeExcluir()" (click)="excluir()">Excluir</button>
         </div>
       </div>
 
@@ -52,10 +52,10 @@
 
     <!-- Prioridade & SLA -->
     <div>
-      <h3>Prioridade</h3>
+      <h3 id="lbl-prioridade">Prioridade</h3>
 
       <ng-container *ngIf="role === 'TECNICO' || role === 'ADMIN'; else prioridadeReadOnly">
-        <select [(ngModel)]="chamado.prioridade" (change)="atualizarPrioridade()" class="full">
+        <select [(ngModel)]="chamado.prioridade" (change)="atualizarPrioridade()" class="full" aria-labelledby="lbl-prioridade">
           <option *ngFor="let p of prioridadeOpcoes" [value]="p">{{ prioridadeLabels[p] }}</option>
         </select>
       </ng-container>
@@ -86,14 +86,14 @@
         <p *ngIf="!chamado?.tecnicoNome">Nenhum responsável</p>
         <p *ngIf="chamado?.tecnicoNome">{{ chamado.tecnicoNome }}</p>
 
-        <button class="btn btn-primary full" (click)="atenderChamado()">
+        <button type="button" class="btn btn-primary full" (click)="atenderChamado()">
           Atender Chamado
         </button>
       </div>
 
       <div>
-        <h3>Status</h3>
-        <select [(ngModel)]="chamado.status" (change)="atualizarStatus()" class="full">
+        <h3 id="lbl-status-tec">Status</h3>
+        <select [(ngModel)]="chamado.status" (change)="atualizarStatus()" class="full" aria-labelledby="lbl-status-tec">
           <option value="ABERTO">Aberto</option>
           <option value="EM_ANDAMENTO">Em andamento</option>
           <option value="RESOLVIDO">Resolvido</option>
@@ -105,26 +105,27 @@
     <!-- Admin -->
     <ng-container *ngIf="role === 'ADMIN'">
       <div>
-        <h3>Atribuir Técnico</h3>
+        <h3 id="lbl-atribuir">Atribuir Técnico</h3>
 
-        <select [(ngModel)]="tecnicoSelecionado" class="full">
+        <select [(ngModel)]="tecnicoSelecionado" class="full" aria-labelledby="lbl-atribuir">
           <option [value]="null" disabled>Selecione...</option>
           <option *ngFor="let t of tecnicos" [value]="t.id">
             {{ t.nome }} ({{ t.nivelTecnico || 'N1' }})
           </option>
         </select>
 
-        <button class="btn btn-primary full" (click)="atribuirTecnicoPorAdmin()">
+        <button type="button" class="btn btn-primary full" (click)="atribuirTecnicoPorAdmin()">
           Atribuir Técnico
         </button>
       </div>
 
       <div>
-        <h3>Status</h3>
-        <select [(ngModel)]="chamado.status" (change)="atualizarStatus()" class="full">
+        <h3 id="lbl-status-adm">Status</h3>
+        <select [(ngModel)]="chamado.status" (change)="atualizarStatus()" class="full" aria-labelledby="lbl-status-adm">
           <option value="ABERTO">Aberto</option>
           <option value="EM_ANDAMENTO">Em andamento</option>
-          <option value="FINALIZADO">Finalizado</option>
+          <option value="RESOLVIDO">Resolvido</option>
+          <option value="FECHADO">Fechado</option>
         </select>
       </div>
     </ng-container>
@@ -140,19 +141,19 @@
         </p>
 
         <ng-container *ngIf="podeEscalonar(); else nivelMaximo">
-          <label>Atribuir a (opcional)</label>
-          <select [(ngModel)]="escalonamentoTecnicoId" class="full">
+          <label for="esc-tecnico">Atribuir a (opcional)</label>
+          <select id="esc-tecnico" [(ngModel)]="escalonamentoTecnicoId" class="full">
             <option [ngValue]="null">Atribuição automática</option>
             <option *ngFor="let t of tecnicos" [value]="t.id">
               {{ t.nome }} ({{ t.nivelTecnico || 'N1' }})
             </option>
           </select>
 
-          <label>Motivo (opcional)</label>
-          <textarea [(ngModel)]="escalonamentoMotivo" rows="2" class="full"
+          <label for="esc-motivo">Motivo (opcional)</label>
+          <textarea id="esc-motivo" [(ngModel)]="escalonamentoMotivo" rows="2" class="full" maxlength="1000"
                     placeholder="Motivo do escalonamento..."></textarea>
 
-          <button class="btn btn-primary full" (click)="escalonar()">
+          <button type="button" class="btn btn-primary full" (click)="escalonar()">
             Escalonar para {{ nivelLabels[proximoNivelLabel()] }}
           </button>
         </ng-container>
@@ -175,17 +176,18 @@
       </div>
 
       <div>
-        <h3 style="margin-top:18px">Avaliação do Atendimento</h3>
+        <h3 id="lbl-avaliacao" style="margin-top:18px">Avaliação do Atendimento</h3>
 
-        <select [(ngModel)]="avaliacao" class="full">
+        <select [(ngModel)]="avaliacao" class="full" aria-labelledby="lbl-avaliacao">
           <option [ngValue]="null" disabled>Escolha uma nota</option>
           <option *ngFor="let n of [0,1,2,3,4,5]" [value]="n">{{ n }}</option>
         </select>
 
-        <h3>Feedback</h3>
-        <textarea [(ngModel)]="feedback" rows="4" placeholder="Descreva sua experiência..." class="full"></textarea>
+        <h3 id="lbl-feedback">Feedback</h3>
+        <textarea [(ngModel)]="feedback" rows="4" placeholder="Descreva sua experiência..." class="full"
+                  maxlength="2000" aria-labelledby="lbl-feedback"></textarea>
 
-        <button class="btn btn-primary full" (click)="salvarFeedback()">
+        <button type="button" class="btn btn-primary full" (click)="salvarFeedback()">
           Enviar Avaliação
         </button>
       </div>

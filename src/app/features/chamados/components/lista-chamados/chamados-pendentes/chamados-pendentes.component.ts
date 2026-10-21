@@ -15,7 +15,8 @@ import { PRIORIDADE_LABELS, STATUS_SLA_LABELS } from '../../../../../shared/cham
       </div>
 
       <div class="tickets-grid">
-        <div *ngFor="let c of chamados" class="ticket-card" (click)="open(c.id)">
+        <div *ngFor="let c of chamados" class="ticket-card" role="link" tabindex="0"
+             (click)="open(c.id)" (keydown.enter)="open(c.id)">
           <div class="ticket-info">
             <strong class="ticket-title">{{ c.titulo }}</strong>
             <p><b>Descrição:</b> {{ c.descricao }}</p>

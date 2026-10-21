@@ -12,8 +12,11 @@
   box-shadow: var(--shadow-md);
 }
 
-h3{
-  margin-bottom: 2vh;
+.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 1vh;
 }
 
 .form-row {
@@ -25,7 +28,7 @@ textarea {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #6b7280;
   background: #fff;
   font-size: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -35,7 +38,7 @@ textarea {
 textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.45);
 }
 
 textarea {
@@ -45,6 +48,7 @@ textarea {
 .form-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
 }
 
 .hint {
