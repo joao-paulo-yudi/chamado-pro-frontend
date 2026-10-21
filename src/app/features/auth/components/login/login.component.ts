@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
     templateUrl: './login.component.html',
     styleUrls: ['./login.style.css']
 })
@@ -35,7 +35,6 @@ export class LoginComponent {
     onSubmit() {
         this.form.markAllAsTouched();
         if (this.form.invalid) {
-            console.log('Form inválido!', this.form.value);
             return;
         }
 
@@ -48,7 +47,9 @@ export class LoginComponent {
                 this.router.navigate(['/']);
             },
             error: (err) => {
-                this.errorMessage = 'Email ou senha incorretos!';
+                this.errorMessage = err.status === 429
+                    ? 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.'
+                    : 'E-mail ou senha incorretos.';
                 this.loading = false;
             },
         });

@@ -1,18 +1,25 @@
-<div class="card">
+<form class="card" (ngSubmit)="enviar()">
   <div class="form-row">
-    <h3>Título</h3>
-    <input class="input" placeholder="Título" [(ngModel)]="model.titulo" />
+    <label for="titulo" class="form-label">Título <span aria-hidden="true">*</span></label>
+    <input id="titulo" name="titulo" class="input" placeholder="Resumo do problema" [(ngModel)]="model.titulo"
+           required maxlength="200" aria-required="true" />
   </div>
 
   <div class="form-row">
-    <h3>Descrição</h3>
-    <textarea class="input" rows="6" placeholder="Descrição" [(ngModel)]="model.descricao"></textarea>
+    <label for="descricao" class="form-label">Descrição <span aria-hidden="true">*</span></label>
+    <textarea id="descricao" name="descricao" class="input" rows="6" placeholder="Descreva o que aconteceu"
+              [(ngModel)]="model.descricao" required maxlength="5000" aria-required="true"
+              aria-describedby="descricao-dica"></textarea>
+    <small id="descricao-dica" class="hint">
+      Não inclua senhas, dados de saúde, documentos ou dados pessoais de terceiros.
+      Informe apenas o necessário para o atendimento.
+    </small>
   </div>
 
   <div class="form-row">
-    <h3>Categoria</h3>
-    <select class="input" [(ngModel)]="model.categoria" (ngModelChange)="onCategoriaChange()" placeholder="Selecione...">
-      <option [ngValue]="null" disabled selected>Selecione...</option>
+    <label for="categoria" class="form-label">Categoria</label>
+    <select id="categoria" name="categoria" class="input" [(ngModel)]="model.categoria" (ngModelChange)="onCategoriaChange()">
+      <option [ngValue]="undefined" disabled>Selecione...</option>
       <option value="HARDWARE">HARDWARE</option>
       <option value="SOFTWARE">SOFTWARE</option>
       <option value="REDE">REDE</option>
@@ -22,18 +29,21 @@
   </div>
 
   <div class="form-row">
-    <h3>Prioridade</h3>
-    <select class="input" [(ngModel)]="model.prioridade" (ngModelChange)="onPrioridadeChange()">
+    <label for="prioridade" class="form-label">Prioridade</label>
+    <select id="prioridade" name="prioridade" class="input" [(ngModel)]="model.prioridade" (ngModelChange)="onPrioridadeChange()"
+            aria-describedby="prioridade-dica">
       <option [ngValue]="undefined" disabled>Selecione uma categoria...</option>
       <option *ngFor="let p of prioridadeOpcoes" [value]="p">{{ prioridadeLabels[p] }}</option>
     </select>
-    <small class="hint">
+    <small id="prioridade-dica" class="hint">
       Sugerida automaticamente com base na categoria, mas pode ser ajustada.
     </small>
   </div>
 
+  <p class="hint">* Campos obrigatórios</p>
+
   <div class="form-actions">
-    <button class="btn" type="button" (click)="enviar()">Enviar</button>
+    <button class="btn" type="submit">Enviar</button>
     <button class="btn btn-secondary" type="button" (click)="voltar()">Cancelar</button>
   </div>
-</div>
+</form>

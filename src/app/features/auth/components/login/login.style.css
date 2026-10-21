@@ -28,7 +28,7 @@
     margin: 0 auto;
 }
 
-h2 {
+h1 {
     font-size: 2rem;
     margin-bottom: 20px;
     font-weight: 600;
@@ -172,29 +172,19 @@ label {
   }
 }
 
-.password-group {
-  position: relative;
-}
-
-.toggle-password {
-  background: none;
-  border: none;
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: var(--primary);
-  font-size: 1rem;
-}
-
-.toggle-password:hover {
-  color: var(--primary-hover);
-}
-
 .error {
-  color: #e53935;
+  color: var(--danger);
   font-size: 1rem;
   margin-top: -4px;
   margin-bottom: 8px;
+}
+
+.login-legal {
+  margin-top: 24px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.login-legal a {
+  color: var(--primary-hover);
 }

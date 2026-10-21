@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ChamadosService, Chamado } from '../../../services/chamados.service';
 import { NgFor, NgClass, NgIf, DatePipe } from '@angular/common';
 import { AuthService } from '../../../../auth/services/auth.service';
-import { UsuariosService } from '../../../../usuarios/services/usuario.service'
+import { PerfilService } from '../../../../../core/services/perfil.service';
 import { PRIORIDADE_LABELS, STATUS_SLA_LABELS } from '../../../../../shared/chamado-labels';
 
 @Component({
@@ -17,7 +17,8 @@ import { PRIORIDADE_LABELS, STATUS_SLA_LABELS } from '../../../../../shared/cham
       </div>
 
       <div class="tickets-grid">
-        <div *ngFor="let c of chamados" class="ticket-card" (click)="open(c.id)">
+        <div *ngFor="let c of chamados" class="ticket-card" role="link" tabindex="0"
+             (click)="open(c.id)" (keydown.enter)="open(c.id)">
           <div class="ticket-info">
             <strong class="ticket-title">{{ c.titulo }}</strong>
             <p><b>Descrição:</b> {{ c.descricao }}</p>
@@ -54,25 +55,13 @@ export class MeusChamadosComponent implements OnInit {
     constructor(private router: Router,
         private chamadosService: ChamadosService,
         private auth: AuthService,
-        private usuarios: UsuariosService) { }
+        private perfil: PerfilService) { }
 
     ngOnInit() {
         this.role = this.auth.getUserRole();
-        const email = this.auth.getUserEmail();
 
-        if (!email) {
-            console.error("Usuário não logado");
-            return;
-        }
-
-        this.usuarios.listar().subscribe({
-            next: users => {
-                const usuario = users.find(u => u.email === email);
-                if (!usuario) {
-                    console.error("Usuário não encontrado na base");
-                    return;
-                }
-
+        this.perfil.me().subscribe({
+            next: usuario => {
                 if (this.role === 'CLIENTE') {
                     this.chamadosService.listarPorCliente(usuario.id).subscribe({
                         next: data => this.chamados = data,
@@ -85,7 +74,7 @@ export class MeusChamadosComponent implements OnInit {
                     });
                 }
             },
-            error: err => console.error("Erro ao buscar usuários", err)
+            error: err => console.error("Erro ao carregar perfil", err)
         });
     }
 

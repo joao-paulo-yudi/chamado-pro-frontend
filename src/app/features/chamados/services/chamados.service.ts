@@ -55,7 +55,7 @@ export class ChamadosService {
     return this.api.get<Chamado>(`${this.apiUrl}/${id}`);
   }
 
-  criar(chamado: { titulo: string; descricao: string; clienteNome?: string; categoria?: string; prioridade?: string; clienteId?: number }): Observable<Chamado> {
+  criar(chamado: { titulo: string; descricao: string; categoria?: string; prioridade?: string; clienteId?: number }): Observable<Chamado> {
     return this.api.post<Chamado>(this.apiUrl, chamado);
   }
 
@@ -84,7 +84,7 @@ export class ChamadosService {
    * nível informado, opcionalmente atribuindo a um técnico específico.
    */
   escalonar(id: number, request: EscalonarRequest = {}): Observable<Chamado> {
-    return this.api.post<Chamado>(`${this.apiUrl}/${id}/escalonar`, request);
+    return this.api.put<Chamado>(`${this.apiUrl}/${id}/escalonar`, request);
   }
 
   /**

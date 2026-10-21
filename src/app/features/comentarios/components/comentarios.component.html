@@ -1,15 +1,19 @@
-<div class="comentarios-container">
+<section class="comentarios-container" aria-labelledby="titulo-comentarios">
 
-  <h3>Comentários</h3>
+  <h3 id="titulo-comentarios">Comentários</h3>
 
-  <div *ngFor="let c of comentarios" class="comentario-item">
+  <p *ngIf="comentarios.length === 0" class="vazio">Nenhum comentário ainda.</p>
+
+  <article *ngFor="let c of comentarios" class="comentario-item">
     <div class="comentario-header">
       <strong>{{ c.autorNome }}</strong>
       <span class="data">{{ c.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
 
-      <button 
+      <button
+        type="button"
         class="btn-danger btn-sm"
         *ngIf="podeExcluir(c)"
+        [attr.aria-label]="'Excluir comentário de ' + c.autorNome"
         (click)="excluirComentario(c.id)">
         Excluir
       </button>
@@ -18,18 +22,21 @@
     <p class="texto">
       {{ c.texto }}
     </p>
-  </div>
+  </article>
 
   <div class="novo-comentario">
+    <label for="novo-comentario-{{ chamadoId }}" class="sr-only">Novo comentário</label>
     <textarea
+      id="novo-comentario-{{ chamadoId }}"
       [(ngModel)]="novoComentario"
       placeholder="Escreva um comentário..."
+      maxlength="5000"
       rows="3">
     </textarea>
 
-    <button class="btn" (click)="enviarComentario()">
+    <button type="button" class="btn" (click)="enviarComentario()">
       Enviar
     </button>
   </div>
 
-</div>
+</section>

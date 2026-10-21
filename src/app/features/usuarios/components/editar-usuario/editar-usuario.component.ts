@@ -13,6 +13,7 @@ import { NgIf } from '@angular/common';
 })
 export class EditarUsuarioComponent implements OnInit {
   usuario?: Usuario;
+  erro = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -27,16 +28,18 @@ export class EditarUsuarioComponent implements OnInit {
 
   salvar() {
     if (!this.usuario) return;
-    this.usuariosService.atualizar(this.usuario.id, this.usuario).subscribe(() => {
-      this.router.navigate(['/usuarios']);
+    this.usuariosService.atualizar(this.usuario.id, this.usuario).subscribe({
+      next: () => this.router.navigate(['/usuarios']),
+      error: err => this.erro = err.error?.message || 'Não foi possível salvar o usuário.'
     });
   }
 
   deletar() {
     if (!this.usuario) return;
     if (confirm('Tem certeza que deseja deletar este usuário?')) {
-      this.usuariosService.excluir(this.usuario.id).subscribe(() => {
-        this.router.navigate(['/usuarios']);
+      this.usuariosService.excluir(this.usuario.id).subscribe({
+        next: () => this.router.navigate(['/usuarios']),
+        error: err => this.erro = err.error?.message || 'Não foi possível excluir o usuário.'
       });
     }
   }

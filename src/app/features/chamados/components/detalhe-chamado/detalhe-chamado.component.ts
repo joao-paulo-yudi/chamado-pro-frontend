@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { ComentariosComponent } from '../../../comentarios/components/comentarios.component';
 import { Location } from '@angular/common';
 import { AuthService } from '../../../auth/services/auth.service';
-import { UsuariosService, Usuario } from '../../../usuarios/services/usuario.service';
+import { UsuariosService, TecnicoResumo } from '../../../usuarios/services/usuario.service';
+import { PerfilService, Perfil } from '../../../../core/services/perfil.service';
 import {
   PRIORIDADE_LABELS,
   PRIORIDADE_OPCOES,
@@ -30,13 +31,13 @@ export class DetalheChamadoComponent implements OnInit {
 
   role: string | null = null;
 
-  tecnicos: Usuario[] = [];
+  tecnicos: TecnicoResumo[] = [];
   tecnicoSelecionado: number | null = null;
 
   avaliacao: number | null = null;
   feedback: string = "";
 
-  usuarioAtual: Usuario | null = null;
+  usuarioAtual: Perfil | null = null;
 
   // Prioridade / SLA / Escalonamento
   prioridadeLabels = PRIORIDADE_LABELS;
@@ -55,21 +56,25 @@ export class DetalheChamadoComponent implements OnInit {
     private chamados: ChamadosService,
     private usuariosService: UsuariosService,
     private auth: AuthService,
+    private perfil: PerfilService,
     private location: Location
   ) { }
 
   ngOnInit() {
     this.role = this.auth.getUserRole();
-    const email = this.auth.getUserEmail();
 
-    this.usuariosService.listar().subscribe({
-      next: (users: Usuario[]) => {
-        this.tecnicos = users.filter(u => u.tipoUsuario === 'TECNICO');
-
-        this.usuarioAtual = users.find(u => u.email === email) || null;
-      },
-      error: err => console.error("Erro ao carregar usuários", err)
+    this.perfil.me().subscribe({
+      next: p => this.usuarioAtual = p,
+      error: err => console.error("Erro ao carregar perfil", err)
     });
+
+    // Somente a equipe de atendimento precisa da lista de técnicos (dados mínimos: id, nome, nível)
+    if (this.role === 'ADMIN' || this.role === 'TECNICO') {
+      this.usuariosService.listarTecnicos().subscribe({
+        next: tecnicos => this.tecnicos = tecnicos,
+        error: err => console.error("Erro ao carregar técnicos", err)
+      });
+    }
 
     this.chamadoId = Number(this.route.snapshot.paramMap.get('id'));
     this.carregarChamado();
@@ -83,11 +88,6 @@ export class DetalheChamadoComponent implements OnInit {
 
         this.avaliacao = data.avaliacao ?? null;
         this.feedback = data.feedback ?? "";
-
-        if (!this.chamado.clienteNome) {
-          const email = this.auth.getUserEmail();
-          this.chamado.clienteNome = email ?? '---';
-        }
       },
       error: err => console.error('Erro ao carregar chamado', err)
     });
@@ -147,7 +147,6 @@ export class DetalheChamadoComponent implements OnInit {
       titulo: this.chamado.titulo,
       descricao: this.chamado.descricao,
       categoria: this.chamado.categoria,
-      clienteNome: this.chamado.clienteNome,
       status: this.chamado.status
     }).subscribe({
       next: (chamado: Chamado) => {
@@ -232,7 +231,6 @@ export class DetalheChamadoComponent implements OnInit {
       titulo: this.chamado.titulo,
       descricao: this.chamado.descricao,
       categoria: this.chamado.categoria,
-      clienteNome: this.chamado.clienteNome,
       status: this.chamado.status,
       avaliacao: this.avaliacao ?? undefined,
       feedback: this.feedback
@@ -243,6 +241,16 @@ export class DetalheChamadoComponent implements OnInit {
       },
       error: err => console.error("Erro ao salvar feedback", err)
     });
+  }
+
+  /** Equipe de atendimento ou o cliente que abriu o chamado. */
+  podeEditar(): boolean {
+    if (this.role === 'ADMIN' || this.role === 'TECNICO') return true;
+    return !!this.chamado && !!this.usuarioAtual && this.chamado.clienteId === this.usuarioAtual.id;
+  }
+
+  podeExcluir(): boolean {
+    return this.role === 'ADMIN';
   }
 
   editar() {

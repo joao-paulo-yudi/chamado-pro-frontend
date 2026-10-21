@@ -18,19 +18,19 @@
         </span>
       </h3>
 
-      <label>Tempo de primeira resposta (minutos)</label>
-      <input type="number" min="1" class="input" [(ngModel)]="config.tempoRespostaMinutos" />
+      <label [for]="'resp-' + config.prioridade">Tempo de primeira resposta (minutos)</label>
+      <input [id]="'resp-' + config.prioridade" type="number" min="1" max="525600" class="input" [(ngModel)]="config.tempoRespostaMinutos" />
       <small class="hint">≈ {{ paraHoras(config.tempoRespostaMinutos) }}</small>
 
-      <label>Tempo de resolução (minutos)</label>
-      <input type="number" min="1" class="input" [(ngModel)]="config.tempoResolucaoMinutos" />
+      <label [for]="'resol-' + config.prioridade">Tempo de resolução (minutos)</label>
+      <input [id]="'resol-' + config.prioridade" type="number" min="1" max="525600" class="input" [(ngModel)]="config.tempoResolucaoMinutos" />
       <small class="hint">≈ {{ paraHoras(config.tempoResolucaoMinutos) }}</small>
 
-      <button class="btn full" (click)="salvar(config)" [disabled]="config.salvando">
+      <button type="button" class="btn full" (click)="salvar(config)" [disabled]="config.salvando">
         {{ config.salvando ? 'Salvando...' : 'Salvar' }}
       </button>
 
-      <p class="msg-sucesso" *ngIf="config.salvo">Configuração salva!</p>
+      <p class="msg-sucesso" role="status" *ngIf="config.salvo">Configuração salva!</p>
     </div>
   </div>
 </div>

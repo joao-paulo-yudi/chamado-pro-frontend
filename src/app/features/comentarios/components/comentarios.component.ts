@@ -3,6 +3,7 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ComentariosService, Comentario } from '../service/comentarios.service';
 import { AuthService } from './../../auth/services/auth.service';
+import { PerfilService } from '../../../core/services/perfil.service';
 
 @Component({
   selector: 'app-comentarios',
@@ -19,16 +20,17 @@ export class ComentariosComponent implements OnInit {
   novoComentario: string = '';
 
   role: string | null = null;
-  usuarioNome: string = "";
+  usuarioId: number | null = null;
 
   constructor(
     private comentariosService: ComentariosService,
-    private auth: AuthService
+    private auth: AuthService,
+    private perfil: PerfilService
   ) { }
 
   ngOnInit() {
     this.role = this.auth.getUserRole();
-    this.usuarioNome = this.auth.getUserEmail() ?? "";
+    this.perfil.me().subscribe({ next: p => this.usuarioId = p.id });
 
     this.carregarComentarios();
   }
@@ -47,11 +49,8 @@ export class ComentariosComponent implements OnInit {
   enviarComentario() {
     if (!this.novoComentario.trim()) return;
 
-    const comentario = {
-      texto: this.novoComentario.trim(),
-      autorNome: this.usuarioNome,
-      chamadoId: this.chamadoId
-    };
+    // O autor é definido no servidor a partir do usuário autenticado
+    const comentario = { texto: this.novoComentario.trim() };
 
     this.comentariosService.criar(this.chamadoId, comentario).subscribe({
       next: novo => {
@@ -65,7 +64,7 @@ export class ComentariosComponent implements OnInit {
   podeExcluir(c: Comentario): boolean {
     return (
       this.role === 'ADMIN' ||
-      c.autorNome === this.usuarioNome
+      (this.usuarioId !== null && c.autorId === this.usuarioId)
     );
   }
 

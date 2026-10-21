@@ -50,7 +50,7 @@
         <div class="bar-chart">
           <div class="bar-row" *ngFor="let item of slaItems">
             <span class="bar-label">{{ item.label }}</span>
-            <div class="bar-track">
+            <div class="bar-track" aria-hidden="true">
               <div class="bar-fill" [ngClass]="'bar-sla-' + item.key" [style.width.%]="item.pct"></div>
             </div>
             <span class="bar-value">{{ item.value }}</span>
@@ -64,7 +64,7 @@
         <div class="bar-chart">
           <div class="bar-row" *ngFor="let item of prioridadeItems">
             <span class="bar-label">{{ item.label }}</span>
-            <div class="bar-track">
+            <div class="bar-track" aria-hidden="true">
               <div class="bar-fill" [ngClass]="'bar-prioridade-' + item.key" [style.width.%]="item.pct"></div>
             </div>
             <span class="bar-value">{{ item.value }}</span>
@@ -78,7 +78,7 @@
         <div class="bar-chart">
           <div class="bar-row" *ngFor="let item of nivelItems">
             <span class="bar-label">{{ item.label }}</span>
-            <div class="bar-track">
+            <div class="bar-track" aria-hidden="true">
               <div class="bar-fill bar-nivel" [style.width.%]="item.pct"></div>
             </div>
             <span class="bar-value">{{ item.value }}</span>
@@ -92,7 +92,7 @@
         <div class="bar-chart">
           <div class="bar-row" *ngFor="let item of categoriaItems">
             <span class="bar-label">{{ item.label }}</span>
-            <div class="bar-track">
+            <div class="bar-track" aria-hidden="true">
               <div class="bar-fill bar-categoria" [style.width.%]="item.pct"></div>
             </div>
             <span class="bar-value">{{ item.value }}</span>
@@ -106,7 +106,7 @@
         <div class="bar-chart">
           <div class="bar-row" *ngFor="let item of tecnicoItems">
             <span class="bar-label">{{ item.label }}</span>
-            <div class="bar-track">
+            <div class="bar-track" aria-hidden="true">
               <div class="bar-fill bar-tecnico" [style.width.%]="item.pct"></div>
             </div>
             <span class="bar-value">{{ item.value }}</span>
@@ -117,6 +117,6 @@
     </div>
   </ng-container>
 
-  <p *ngIf="!dados && !erro" class="muted">Carregando dados...</p>
-  <p *ngIf="erro" class="muted">Não foi possível carregar os dados do painel.</p>
+  <p *ngIf="!dados && !erro" class="muted" role="status">Carregando dados...</p>
+  <p *ngIf="erro" class="muted" role="alert">Não foi possível carregar os dados do painel.</p>
 </div>

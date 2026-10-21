@@ -3,9 +3,6 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { ChamadosService } from '../../services/chamados.service';
-import { AuthService } from '../../../auth/services/auth.service';
-import { UsuariosService, Usuario } from '../../../usuarios/services/usuario.service';
-import { switchMap } from 'rxjs';
 import { PRIORIDADE_LABELS, PRIORIDADE_OPCOES, sugerirPrioridade } from '../../../../shared/chamado-labels';
 
 @Component({
@@ -24,9 +21,7 @@ export class NovoChamadoComponent {
 
   constructor(
     private router: Router,
-    private chamados: ChamadosService,
-    private auth: AuthService,
-    private usuariosService: UsuariosService
+    private chamados: ChamadosService
   ) {}
 
   /**
@@ -44,41 +39,27 @@ export class NovoChamadoComponent {
   }
 
   enviar() {
-    if (!this.model.titulo || !this.model.descricao) {
+    if (!this.model.titulo?.trim() || !this.model.descricao?.trim()) {
       alert('Preencha todos os campos obrigatórios');
       return;
     }
 
-    const email = this.auth.getUserEmail();
-    if (!email) {
-      alert('Usuário não autenticado');
-      return;
-    }
+    // O cliente do chamado é definido no servidor a partir do usuário autenticado
+    const payload = {
+      titulo: this.model.titulo.trim(),
+      descricao: this.model.descricao.trim(),
+      categoria: this.model.categoria,
+      prioridade: this.model.prioridade || sugerirPrioridade(this.model.categoria)
+    };
 
-    this.usuariosService.listar().pipe(
-      switchMap((usuarios) => {
-        const usuario = usuarios.find(u => u.email === email);
-        if (!usuario) throw new Error('Usuário não encontrado');
-
-        const payload = {
-          titulo: this.model.titulo!,
-          descricao: this.model.descricao!,
-          categoria: this.model.categoria,
-          prioridade: this.model.prioridade || sugerirPrioridade(this.model.categoria),
-          clienteId: usuario.id,
-          clienteNome: usuario.nome
-        };
-
-        return this.chamados.criar(payload);
-      })
-    ).subscribe({
+    this.chamados.criar(payload).subscribe({
       next: () => {
         alert('Chamado criado com sucesso!');
         this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Erro ao criar chamado', err);
-        alert('Erro ao criar chamado: ' + (err.error?.error || err.message));
+        alert('Erro ao criar chamado: ' + (err.error?.message || 'tente novamente.'));
       }
     });
   }

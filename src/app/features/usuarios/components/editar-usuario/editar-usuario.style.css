@@ -7,7 +7,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
   
-  h3 {
+  h1, h3 {
     font-size: 1.7rem;
   }
   
@@ -20,7 +20,7 @@
   input, select {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #6b7280;
   }
   
   .btn {
@@ -31,7 +31,7 @@
   .btn-delete {
     background: none;
     border: none;
-    color: red;
+    color: #b91c1c;
     cursor: pointer;
   }
   
@@ -42,8 +42,25 @@
   }
   
   .msg-sucesso {
-    color: green;
+    color: var(--success);
     font-weight: 600;
     margin-top: 10px;
   }
   
+.whatsapp-box {
+  border: 1px solid #6b7280;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.erro {
+  color: var(--danger);
+}

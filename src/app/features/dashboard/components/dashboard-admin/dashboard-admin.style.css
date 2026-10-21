@@ -112,20 +112,20 @@
 }
 
 /* Cores por status de SLA */
-.bar-sla-NO_PRAZO { background: #06b6d4; }
-.bar-sla-EM_RISCO { background: #f59e0b; }
+.bar-sla-NO_PRAZO { background: #0e7490; }
+.bar-sla-EM_RISCO { background: #b45309; }
 .bar-sla-ESTOURADO { background: #dc2626; }
-.bar-sla-CUMPRIDO { background: #16a34a; }
+.bar-sla-CUMPRIDO { background: #15803d; }
 
 /* Cores por prioridade */
-.bar-prioridade-BAIXA { background: #94a3b8; }
+.bar-prioridade-BAIXA { background: #64748b; }
 .bar-prioridade-MEDIA { background: #6366f1; }
-.bar-prioridade-ALTA { background: #f59e0b; }
+.bar-prioridade-ALTA { background: #b45309; }
 .bar-prioridade-CRITICA { background: #dc2626; }
 
 /* Cores genéricas para nível, categoria e técnico */
 .bar-nivel { background: #6366f1; }
-.bar-categoria { background: #0ea5e9; }
+.bar-categoria { background: #0369a1; }
 .bar-tecnico { background: #000842; }
 
 @media (max-width: 600px) {

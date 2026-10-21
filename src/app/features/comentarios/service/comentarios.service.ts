@@ -7,6 +7,7 @@ export interface Comentario {
   texto: string;
   dataCriacao?: string;
   autorNome?: string;
+  autorId?: number;
   chamadoId: number;
 }
 
@@ -20,7 +21,7 @@ export class ComentariosService {
     return this.api.get<Comentario[]>(`${this.apiUrl}/chamado/${chamadoId}`);
   }
 
-  criar(chamadoId: number, comentario: { texto: string; autorNome: string }): Observable<Comentario> {
+  criar(chamadoId: number, comentario: { texto: string }): Observable<Comentario> {
     return this.api.post<Comentario>(`${this.apiUrl}/chamado/${chamadoId}`, comentario);
   }
 

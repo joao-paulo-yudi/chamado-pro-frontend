@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgFor, NgIf, NgClass, DatePipe } from '@angular/common';
 import { Subscription, interval, startWith, switchMap } from 'rxjs';
@@ -10,12 +10,14 @@ import { NotificacoesService, Notificacao } from '../../services/notificacoes.se
   imports: [NgFor, NgIf, NgClass, DatePipe],
   template: `
     <div class="notif-wrapper">
-      <button class="notif-btn" (click)="toggle()" title="Notificações">
-        <i class="fa-solid fa-bell"></i>
-        <span class="notif-count" *ngIf="naoLidas > 0">{{ naoLidas > 9 ? '9+' : naoLidas }}</span>
+      <button type="button" class="notif-btn" (click)="toggle()" title="Notificações"
+              [attr.aria-label]="naoLidas > 0 ? 'Notificações, ' + naoLidas + ' não lidas' : 'Notificações'"
+              [attr.aria-expanded]="aberto" aria-controls="notif-dropdown">
+        <i class="fa-solid fa-bell" aria-hidden="true"></i>
+        <span class="notif-count" *ngIf="naoLidas > 0" aria-hidden="true">{{ naoLidas > 9 ? '9+' : naoLidas }}</span>
       </button>
 
-      <div class="notif-dropdown" *ngIf="aberto">
+      <div id="notif-dropdown" class="notif-dropdown" *ngIf="aberto" role="region" aria-label="Lista de notificações">
         <div class="notif-header">
           <strong>Notificações</strong>
         </div>
@@ -23,12 +25,12 @@ import { NotificacoesService, Notificacao } from '../../services/notificacoes.se
         <p class="notif-empty" *ngIf="notificacoes.length === 0">Nenhuma notificação.</p>
 
         <ul class="notif-list">
-          <li *ngFor="let n of notificacoes"
-              class="notif-item"
-              [ngClass]="{ 'notif-unread': !n.lida }"
-              (click)="abrir(n)">
-            <p class="notif-msg">{{ n.mensagem }}</p>
-            <span class="notif-date">{{ n.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
+          <li *ngFor="let n of notificacoes">
+            <button type="button" class="notif-item" [ngClass]="{ 'notif-unread': !n.lida }" (click)="abrir(n)">
+              <span class="sr-only" *ngIf="!n.lida">Não lida: </span>
+              <span class="notif-msg">{{ n.mensagem }}</span>
+              <span class="notif-date">{{ n.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
+            </button>
           </li>
         </ul>
       </div>
@@ -97,6 +99,13 @@ import { NotificacoesService, Notificacao } from '../../services/notificacoes.se
     }
 
     .notif-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-left: 4px solid transparent;
+      font: inherit;
       padding: 10px 16px;
       border-bottom: 1px solid #f1f5f9;
       cursor: pointer;
@@ -109,9 +118,11 @@ import { NotificacoesService, Notificacao } from '../../services/notificacoes.se
 
     .notif-item.notif-unread {
       background: #eef2ff;
+      border-left-color: var(--primary-hover);
     }
 
     .notif-msg {
+      display: block;
       margin: 0 0 4px;
       font-size: 0.85rem;
       color: var(--text);
@@ -141,6 +152,12 @@ export class NotificacaoBellComponent implements OnInit, OnDestroy {
       next: (count) => this.naoLidas = count,
       error: () => { /* silencioso - usuário pode não ter permissão ainda */ }
     });
+  }
+
+  /** Fecha o painel com Esc (navegação por teclado). */
+  @HostListener('document:keydown.escape')
+  fecharComEsc() {
+    this.aberto = false;
   }
 
   ngOnDestroy() {
